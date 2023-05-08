@@ -14,7 +14,7 @@ import com.gl.smartlms.model.Category;
 public interface BookService {
 	
 	
-	public List<Book> getByTag(String tag);
+	public Book getByTagInCategory(String tag,Category category);
 
 	public Book addNewBook(Book book);
 
@@ -55,6 +55,8 @@ public interface BookService {
 	public Long getIssuedBookCount();
 
 	public void delete(Book book);
+
+	public Book getByTag(String tag);
 
 
 	

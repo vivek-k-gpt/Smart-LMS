@@ -10,6 +10,8 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.gl.smartlms.advice.NoContentFoundException;
+import com.gl.smartlms.advice.UserNotFoundException;
 import com.gl.smartlms.constants.Constants;
 import com.gl.smartlms.model.User;
 import com.gl.smartlms.repository.UserRepository;
@@ -37,7 +39,13 @@ public Long getStudentsCount() {
 
 	@Override
 	public List<User> getAll() {
-		return userRepository.findAllByOrderByFirstNameAscMiddleNameAsc();
+		
+		
+		List<User> users = userRepository.findAllByOrderByFirstNameAscMiddleNameAsc();
+		if(users.isEmpty()) {
+			throw new NoContentFoundException("No User Is Present  List is Empty");
+		}
+		return users;
 
 	}
 
@@ -56,7 +64,13 @@ public Long getStudentsCount() {
 	@Override
 	public Optional<User> getMember(Long id) {
 		
-		return userRepository.findById(id);
+		Optional<User> user =  userRepository.findById(id);
+		if(user.isEmpty()) {
+			throw new UserNotFoundException("No User is found with id :" + id);
+			
+		}
+		return user;
+		
 	}
 
 
@@ -83,29 +97,48 @@ public Long getStudentsCount() {
 
 	@Override
 	public List<User> getAllStudent() {
-		
-		return userRepository.findByTypeContaining(Constants.MEMBER_STUDENT);
+
+		List<User> students = userRepository.findByTypeContaining(Constants.MEMBER_STUDENT);
+
+		if (students.isEmpty()) {
+			throw new NoContentFoundException("No Student is present List is Empty");
+		}
+		return students;
+
 	}
 
 
 	@Override
 	public List<User> getAllFaculty() {
-	
-		return userRepository.findByTypeContaining(Constants.MEMBER_FACULTY);
+
+		List<User> facultylist = userRepository.findByTypeContaining(Constants.MEMBER_FACULTY);
+
+		if (facultylist.isEmpty()) {
+			throw new NoContentFoundException("No Faculty is present List is Empty");
+		}
+		return facultylist;
 	}
 
 
 	@Override
 	public List<User> getAllActive() {
 	
-		return userRepository.findByActive(1);
+		List<User>  activeList= userRepository.findByActive(1);
+		if(activeList.isEmpty()) {
+		throw new NoContentFoundException("No Active User !  List is Empty");
+		}
+		return activeList;
 	}
 
 
 	@Override
 	public List<User> getAllInActive() {
 		
-		return  userRepository.findByActive(0);
+		List<User> inactiveList = userRepository.findByActive(0);
+		if(inactiveList.isEmpty()) {
+			throw new NoContentFoundException("No InActive User !  List is Empty");
+			}
+			return inactiveList;
 	}
 
 

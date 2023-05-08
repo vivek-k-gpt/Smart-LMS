@@ -54,8 +54,8 @@ public class BookRestController {
 		try {
 			if (optional.isPresent()) {
 				book.setCategory(optional.get());
-
-				if (bookService.getByTag(book.getTag()) != null) {
+				Book book1 = bookService.getByTag(book.getTag());
+				if (book1 != null) {
 
 					return new ResponseEntity<String>("tag already exist", HttpStatus.NOT_ACCEPTABLE);
 				} else {
@@ -164,13 +164,13 @@ public class BookRestController {
 	// List All Book(By Tagname) Api (Admin + User)
 	// ==============================================================
 	@GetMapping("/list-by-tag/{tag}")
-	public ResponseEntity<List<Book>> findBookBytag(@PathVariable String tag) {
+	public ResponseEntity<Book> findBookBytag(@PathVariable String tag) {
 
-		List<Book> book = bookService.getByTag(tag);
+		Book book = bookService.getByTag(tag);
 		try {
 			if (book != null) {
 
-				return new ResponseEntity<List<Book>>(book, HttpStatus.FOUND);
+				return new ResponseEntity<Book>(book, HttpStatus.FOUND);
 			}
 
 		} catch (Exception e) {

@@ -1,4 +1,8 @@
-package com.gl.smartlms.customexception;
+package com.gl.smartlms.advice;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
 
 public class NoSuchIssueIdFoundException extends RuntimeException {
 
@@ -10,10 +14,6 @@ public class NoSuchIssueIdFoundException extends RuntimeException {
 	public NoSuchIssueIdFoundException(String message) {
 		super(message);
 		
-	}
-
-	public NoSuchIssueIdFoundException() {
-	
 	}
 
 	

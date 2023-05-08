@@ -122,7 +122,7 @@ public class User implements Serializable {
 	@Column(name = "type")
 	private String type;
 
-	@NotNull
+	
 	@Column(name = "active")
 	private Integer active;
 

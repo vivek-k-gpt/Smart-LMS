@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 
 
+
 import java.util.Date;
 
 import java.util.List;
@@ -25,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gl.smartlms.constants.Constants;
-import com.gl.smartlms.customexception.NoSuchIssueIdFoundException;
+import com.gl.smartlms.advice.NoSuchIssueIdFoundException;
 import com.gl.smartlms.model.Book;
 import com.gl.smartlms.model.User;
 import com.gl.smartlms.service.BookService;
@@ -97,7 +98,7 @@ public class IssueRestController {
 		@PostMapping("/save/{ids}")
 		public ResponseEntity<String> issueBooks(@PathVariable ("ids")List<Long> ids,
 				@RequestBody Issue issue) {
-			System.out.println(issue.getUser().getId());
+		
 			
 			User member = userService.getMemberById(issue.getUser().getId());
 
@@ -230,7 +231,10 @@ public class IssueRestController {
 		@GetMapping("/fine")
 		public ResponseEntity<String> checkFineStatus(@RequestParam("issue_id") Long id)  throws NoSuchIssueIdFoundException{
 
-			Issue issue = issueService.getIssueDetail(id);
+			Issue issue = issueService.getIssueDetailsById(id).get();
+			if(issue == null) {
+				throw new NoSuchIssueIdFoundException("Issue Id Does not exist");
+			}
 			String msg = "";
 				if(issue.getReturned() == Constants.BOOK_RETURNED) {
 					
@@ -254,6 +258,12 @@ public class IssueRestController {
 		
 		}
 		
+		
+		@GetMapping("/find/{id}")
+		public ResponseEntity<Issue> getiss(@PathVariable Long id) {
+			return new ResponseEntity<Issue>(issueService.getIssueDetail(id), HttpStatus.OK);
+			
+		}
 		
 		
 		

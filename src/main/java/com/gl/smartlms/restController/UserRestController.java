@@ -23,6 +23,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gl.smartlms.advice.AuthenticationFailedException;
+import com.gl.smartlms.advice.RegistrationFailedException;
 import com.gl.smartlms.constants.Constants;
 import com.gl.smartlms.model.User;
 import com.gl.smartlms.service.UserService;
@@ -42,53 +44,71 @@ public class UserRestController {
 	@PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> getUserValidate(@RequestParam String username, @RequestParam String password) {
 
-		User user = userService.getUserValidate(username, password);
-		try {
+		Optional<User> user = Optional.ofNullable(userService.getUserValidate(username, password));
 
-			if (user != null) {
-				if (user.getActive() == 1) {
-					String userJson = Obj.writeValueAsString(user);
-
-					return new ResponseEntity<String>("User Logged in Succesfully" + userJson, HttpStatus.OK);
-
-				} else {
-
-					return new ResponseEntity<String>("User Not Active", HttpStatus.OK);
-				}
-
-			} else {
-				return Constants.getResponseEntity("Authentication Failed ...... Invalid Credentials",
-						HttpStatus.UNAUTHORIZED);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
+		if (user.isEmpty()) {
+			throw new AuthenticationFailedException("Authentication Failed ...... Invalid Credentials");
 		}
 
-		return Constants.getResponseEntity("Username Not Exist", HttpStatus.INTERNAL_SERVER_ERROR);
+		if (user.get().getActive() == 1) {
+			return new ResponseEntity<String>("User Logged in Succesfully", HttpStatus.OK);
+
+		} else {
+
+			return new ResponseEntity<String>("User Not Active.......Contact Administration", HttpStatus.OK);
+		}
 
 	}
 
 	// ==============================================================
-	// User Register API		(Admin + User)
+	// User Register API		(User)
 	// ==============================================================
 
-	@PostMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = "/register", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> registerUser(@Valid @RequestBody User user) {
-		user = userService.registerUser(user);
-		try {
-			if (user != null) {
-				String userJson = Obj.writeValueAsString(user);
-				return new ResponseEntity<String>("User Registered Sucessfully" + userJson, HttpStatus.CREATED);
-			}
-		} catch (Exception e) {
+		user.setActive(0);		user.setRole("User");
+		Optional<User> user1 = Optional.ofNullable(userService.registerUser(user));
 
-			e.printStackTrace();
+		if (user1.isEmpty()) {
+			throw new RegistrationFailedException("Registration Failed");
 		}
 
-		return Constants.getResponseEntity("Regsitration Failed", HttpStatus.INTERNAL_SERVER_ERROR);
+		return new ResponseEntity<String>("User Registered Sucessfully", HttpStatus.CREATED);
 
 	}
 
+	
+	
+
+	// ==============================================================
+	// Add Librarian API API				(Admin)
+	// ==============================================================
+	@RequestMapping(value = "/admin/register", method = RequestMethod.POST)
+	public ResponseEntity<String> saveMember(@Valid @RequestBody User user) {
+			user.setActive(1); user.setRole(Constants.ROLE_LIBRARIAN);
+		Optional<User> user1 = Optional.ofNullable(userService.registerUser(user));
+		if(user1.isEmpty()) {
+			throw new RegistrationFailedException("Registration Failed ......");
+			}
+		return new ResponseEntity<String>("User Registered Successfully", HttpStatus.CREATED);
+	}
+	
+	
+	
+
+	// ============================================================== ============================================================== ==============================================================//
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	// ==============================================================
 	// User Count API		(Admin)
 	// ==============================================================
@@ -108,7 +128,7 @@ public class UserRestController {
 	// Faculty Member Count API   (Admin)
 	// ==============================================================
 
-	@GetMapping("/faculty/count")
+	@GetMapping("/count/faculty")
 	public ResponseEntity<String> countAllFacultyMembers() {
 		Long facultyCount = userService.getFacultyCount();
 		if (facultyCount != 0) {
@@ -121,7 +141,7 @@ public class UserRestController {
 	// Student Member Count API		(Admin)
 	// ==============================================================
 
-	@GetMapping("/student/count")
+	@GetMapping("/count/student")
 	public ResponseEntity<String> countAllStudentMembers() {
 		Long studentCount = userService.getStudentsCount();
 		if (studentCount != 0) {
@@ -130,73 +150,35 @@ public class UserRestController {
 		return Constants.getResponseEntity(Constants.NO_CONTENT, HttpStatus.NO_CONTENT);
 	}
 
-	// ==============================================================
-	// Add Member API				(Admin)
-	// ==============================================================
-	@RequestMapping(value = "/add", method = RequestMethod.POST)
-	public ResponseEntity<String> saveMember(@Valid @RequestBody User user) {
-
-		user = userService.addNewMember(user);
-		if (user != null) {
-			return new ResponseEntity<String>(
-					"Member Added with Name " + user.getFirstName() + " and type " + user.getType(),
-					HttpStatus.CREATED);
-		}
-		return Constants.getResponseEntity("User Addition Failed", HttpStatus.INTERNAL_SERVER_ERROR);
-	}
 
 	// ==============================================================
-	// List Users Api				(Admin)
+	// List Users Api(Sorted)			(Admin)
 	// ==============================================================
-	@GetMapping("/users")
+	@GetMapping("/user")
 	public ResponseEntity<List<User>> showAllUsers() {
-
 		List<User> list = userService.getAll();
-		try {
-			if (list != null) {
-				return new ResponseEntity<List<User>>(list, HttpStatus.FOUND);
-
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return new ResponseEntity<List<User>>(HttpStatus.NO_CONTENT);
+		return new ResponseEntity<List<User>>(list, HttpStatus.FOUND);
 	}
-
+	
+	
 	// ==============================================================
 	// List Student Member Api (Admin)
 	// ==============================================================
 	@GetMapping("/student")
 	public ResponseEntity<List<User>> showAllStudents() {
-
 		List<User> list = userService.getAllStudent();
-		try {
-			if (list != null) {
-				return new ResponseEntity<List<User>>(list, HttpStatus.FOUND);
-
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return new ResponseEntity<List<User>>(HttpStatus.NO_CONTENT);
+		return new ResponseEntity<List<User>>(list, HttpStatus.FOUND);
 	}
 
+	
+	
 	// ==============================================================
 	// List Faculty Member Api		(Admin)
 	// ==============================================================
 	@GetMapping("/faculty")
 	public ResponseEntity<List<User>> showAllFaculties() {
-
 		List<User> list = userService.getAllFaculty();
-		try {
-			if (list != null) {
-				return new ResponseEntity<List<User>>(list, HttpStatus.FOUND);
-
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return new ResponseEntity<List<User>>(HttpStatus.NO_CONTENT);
+		return new ResponseEntity<List<User>>(list, HttpStatus.FOUND);
 	}
 
 	// ==============================================================
@@ -204,49 +186,34 @@ public class UserRestController {
 	// ==============================================================
 	@GetMapping("/active")
 	public ResponseEntity<List<User>> showAllActive() {
-
 		List<User> list = userService.getAllActive();
-		try {
-			if (list != null) {
-				return new ResponseEntity<List<User>>(list, HttpStatus.FOUND);
-
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return new ResponseEntity<List<User>>(HttpStatus.NO_CONTENT);
+		return new ResponseEntity<List<User>>(list, HttpStatus.FOUND);
 	}
+
 
 	// ==============================================================
 	// List Active Member Api		(Admin)
 	// ==============================================================
-	@GetMapping("/inactive/list")
+	@GetMapping("/inactive")
 	public ResponseEntity<List<User>> showAllInActive() {
-
 		List<User> list = userService.getAllInActive();
-		try {
-			if (list != null) {
-				return new ResponseEntity<List<User>>(list, HttpStatus.FOUND);
-
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return new ResponseEntity<List<User>>(HttpStatus.NO_CONTENT);
+		return new ResponseEntity<List<User>>(list, HttpStatus.FOUND);
 	}
+
 
 	// ==============================================================
 	// Blocking Member Api			(Admin)
 	// ==============================================================
 	@PutMapping("/block/{id}")
 	public ResponseEntity<String> blockUser(@PathVariable Long id) {
-		User user = userService.getMemberById(id);
-		if (user != null && user.getActive() == 1) {
+		User user = userService.getMember(id).get();
+		if (user.getActive() == 1) {
 			user.setActive(0);
 			userService.save(user);
-			return new ResponseEntity<String>("User Blocked", HttpStatus.ACCEPTED);
+			return new ResponseEntity<String>("User Blocked Successfully", HttpStatus.ACCEPTED);
 		}
-		return Constants.getResponseEntity(Constants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+		return new ResponseEntity<String>("User is already Blocked", HttpStatus.OK);
+		
 	}
 
 	// ==============================================================
@@ -256,36 +223,25 @@ public class UserRestController {
 	@PutMapping("/unblock/{id}")
 	public ResponseEntity<String> unlockUser(@PathVariable Long id) {
 		User user = userService.getMemberById(id);
-		if (user != null && user.getActive() == 0) {
+		if (user.getActive() == 0) {
 			user.setActive(1);
 			userService.save(user);
 			return new ResponseEntity<String>("User UnBlocked", HttpStatus.ACCEPTED);
 		}
-		return Constants.getResponseEntity(Constants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+		return new ResponseEntity<String>("User is Not Blocked", HttpStatus.ACCEPTED);
 	}
 
 	// ==============================================================
 	// Find Member API(change)		(Admin)
 	// ==============================================================
 
-	@GetMapping(value = "/find/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> findUserById(@PathVariable Long id) {
-		Optional<User> optional = userService.getMember(id);
-
-		try {
-			if (optional.isPresent()) {
-				User member = optional.get();
-				String memberJson = Obj.writeValueAsString(member);
-				return new ResponseEntity<>(memberJson, HttpStatus.FOUND);
-			} else {
-				return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return Constants.getResponseEntity(Constants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+	@GetMapping(value = "/find/{id}")
+	public ResponseEntity<User> findUserById(@PathVariable Long id) {
+		User user = userService.getMember(id).get();
+		return new ResponseEntity<User>(user, HttpStatus.FOUND);
 	}
+			
+
 
 	// ==============================================================
 	// Update Member API		(Admin)
@@ -293,43 +249,30 @@ public class UserRestController {
 
 	@PutMapping("/update")
 	public ResponseEntity<String> updateMember(@Valid @RequestBody User member) {
-
 		Optional<User> member1 = userService.getMember(member.getId());
-
-		if (member1.isPresent()) {
-
-			userService.save(member);
-
-			return new ResponseEntity<String>("Member Updated With Name " + member1.get().getFirstName(),
-					HttpStatus.ACCEPTED);
-		}
-
-		return new ResponseEntity<String>("Member Not Found", HttpStatus.NO_CONTENT);
-
+		userService.save(member);
+		return new ResponseEntity<String>("Member Updated With Name " + member1.get().getFirstName(),
+				HttpStatus.ACCEPTED);
 	}
 
+	
 	// ==============================================================
 	// Delete Member API		(Admin)
 	// ==============================================================
 	@RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
 	public ResponseEntity<String> removeUser(@PathVariable Long id) {
-		User member = userService.getMemberById(id);
-		try {
-			if (member != null) {
-				if (userService.hasUsage(member)) {
-					userService.deleteMember(id);
-					return new ResponseEntity<String>("User Deleted Successfully", HttpStatus.OK);
+		User member = userService.getMember(id).get();
 
-				} else {
-					return new ResponseEntity<String>(
-							"User can not be deleted............. (Member In use -: Books Are not Returned)",
-							HttpStatus.NOT_ACCEPTABLE);
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
+		if (userService.hasUsage(member)) {
+			userService.deleteMember(id);
+			return new ResponseEntity<String>("User Deleted Successfully", HttpStatus.OK);
+
+		} else {
+			return new ResponseEntity<String>(
+					"User can not be deleted............. (Member In use -: Books Are not Returned)",
+					HttpStatus.NOT_ACCEPTABLE);
 		}
-		return Constants.getResponseEntity(Constants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+
 	}
 
 }

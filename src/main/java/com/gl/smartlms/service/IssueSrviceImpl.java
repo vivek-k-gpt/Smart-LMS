@@ -1,6 +1,7 @@
 package com.gl.smartlms.service;
 
 import java.text.SimpleDateFormat;
+
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -9,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.gl.smartlms.constants.Constants;
-import com.gl.smartlms.customexception.NoSuchIssueIdFoundException;
+import com.gl.smartlms.advice.NoSuchIssueIdFoundException;
 import com.gl.smartlms.model.Book;
 import com.gl.smartlms.model.Issue;
 import com.gl.smartlms.model.User;
@@ -36,18 +37,21 @@ public class IssueSrviceImpl implements IssueService {
 
 	@Override
 	public Optional<Issue> getIssueDetailsById(Long id) {
+		
+		Optional<Issue> optional= issueRepository.findById(id);
+		if(optional.isEmpty()) {
+			throw(new NoSuchIssueIdFoundException("message"));
+		}
 		return issueRepository.findById(id);
 	}
 
 	@Override
-	public Issue getIssueDetail(Long id) throws NoSuchIssueIdFoundException {
+	public Issue getIssueDetail(Long id)  {
+	
 		Issue issue =  issueRepository.findById(id).get();
-		if(issue == null) {
-			throw new NoSuchIssueIdFoundException("issue id not exist");
-		}
-		
+	
+	
 		return issue;
-
 	}
 
 	@Override

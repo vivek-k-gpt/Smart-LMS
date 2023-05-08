@@ -18,7 +18,7 @@ import com.gl.smartlms.model.Category;
 @Repository
 public interface BookRepository extends JpaRepository<Book, Long> {
 
-	public List<Book> findByTag(String tag);
+	public Book findByTag(String tag);
 
 	public List<Book> findByAuthors(String authors);
 
@@ -43,6 +43,8 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 	
 	@Query(value = "SELECT count(id) FROM Book where status = :status")
 	public Long countBooksBasedOnStatus(@Param ("status") Integer status);
+
+	public Book findByCategoryAndTag(Category category,String tag);
 	
 	
 

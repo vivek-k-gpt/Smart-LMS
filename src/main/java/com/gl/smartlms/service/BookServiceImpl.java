@@ -25,8 +25,8 @@ public class BookServiceImpl  implements BookService{
 	private BookRepository bookRepository;
 	
 	@Override
-	public List<Book> getByTag(String tag) {
-		return bookRepository.findByTag(tag);
+	public Book getByTagInCategory(String tag,Category category) {
+		return bookRepository.findByCategoryAndTag(category,tag);
 	}
 
 	@Override
@@ -142,6 +142,12 @@ public class BookServiceImpl  implements BookService{
 	public void delete(Book book) {
 	
 		 bookRepository.delete(book);
+	}
+
+	@Override
+	public Book getByTag(String tag) {
+		
+		return bookRepository.findByTag(tag);
 	}
 	
 
