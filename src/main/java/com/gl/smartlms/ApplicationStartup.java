@@ -30,9 +30,9 @@ public class ApplicationStartup implements ApplicationListener<ApplicationReadyE
 	private void initDatabaseEntities() {
 
 		if (userService.getAll().size() == 0) {
-			userService.registerUser(new User("admin", "admin", "male", "vivek", "kumar", "gupta", "08-08-1999",
+			userService.save(new User("admin", "admin", "male", "vivek", "kumar", "gupta", "08-08-1999",
 					"vivekgp8899@gmail.com", "8527648963", Constants.MEMBER_OTHER, Constants.ROLE_ADMIN, 1));
-			userService.registerUser(new User("librarian", "librarian", "male", "saksham", "", "sharma", "10-03-1999",
+			userService.save(new User("librarian", "librarian", "male", "saksham", "", "sharma", "10-03-1999",
 					"saksham@gmail.com", "9854352341", Constants.MEMBER_OTHER, Constants.ROLE_LIBRARIAN, 1));
 
 		}

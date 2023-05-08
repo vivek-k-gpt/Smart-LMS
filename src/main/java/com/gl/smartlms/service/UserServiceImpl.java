@@ -29,15 +29,18 @@ public Long getTotalCount() {
 }
 
 
+
 public Long getFacultyCount() {
 	return userRepository.countByType(Constants.MEMBER_FACULTY);
 }
+
 
 public Long getStudentsCount() {
 	return userRepository.countByType(Constants.MEMBER_STUDENT);
 }
 
-	@Override
+
+@Override
 	public List<User> getAll() {
 		
 		
@@ -47,20 +50,14 @@ public Long getStudentsCount() {
 		}
 		return users;
 
-	}
+}
 
-	@Override
-	public User addNewMember(User member) {
-		member.setJoiningDate( new Date() );
-		return userRepository.save( member );
-	}
 
-	@Override
-	public User save(User member) {
-		
-		return userRepository.save(member);
-	}
 
+	
+	
+
+	
 	@Override
 	public Optional<User> getMember(Long id) {
 		
@@ -75,13 +72,6 @@ public Long getStudentsCount() {
 
 
 	@Override
-	public User getMemberById(Long id) {
-
-		return userRepository.findById(id).get();
-	}
-
-
-	@Override
 	public User getUserValidate(String username, String password) {
 		
 		return userRepository.findByUsernameAndPassword(username,password);
@@ -89,7 +79,7 @@ public Long getStudentsCount() {
 
 
 	@Override
-	public User registerUser(User user) {
+	public User save(User user) {
 
 		return userRepository.save(user);
 	}

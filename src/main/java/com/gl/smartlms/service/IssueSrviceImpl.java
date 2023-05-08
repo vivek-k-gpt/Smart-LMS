@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.gl.smartlms.constants.Constants;
+import com.gl.smartlms.advice.NoContentFoundException;
 import com.gl.smartlms.advice.NoSuchIssueIdFoundException;
 import com.gl.smartlms.model.Book;
 import com.gl.smartlms.model.Issue;
@@ -40,7 +41,7 @@ public class IssueSrviceImpl implements IssueService {
 		
 		Optional<Issue> optional= issueRepository.findById(id);
 		if(optional.isEmpty()) {
-			throw(new NoSuchIssueIdFoundException("message"));
+			throw new NoSuchIssueIdFoundException("Issue Id Does not Exist .. There is no Issue Rescord with id " + id);
 		}
 		return issueRepository.findById(id);
 	}
@@ -92,7 +93,12 @@ public class IssueSrviceImpl implements IssueService {
 	@Override
 	public List<Issue> getRecordList() {
 
-		return issueRepository.findAll();
+		List<Issue> issue = issueRepository.findAll();
+		if (issue.isEmpty()) {
+			throw new NoContentFoundException("No record Is Present (Books  Are Not issued) List is Empty");
+		}
+
+		return issue;
 	}
 
 }

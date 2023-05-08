@@ -57,10 +57,8 @@ public class IssueRestController {
 		@PostMapping("/save")
 		public ResponseEntity<String> issueBook(@RequestBody Issue issue) {
 
-			Book book = bookService.getBook(issue.getBook().getId());
-			User member = userService.getMemberById(issue.getUser().getId());
-
-			try {
+			Book book = bookService.getBookById(issue.getBook().getId()).get();
+			User member = userService.getMember(issue.getUser().getId()).get();
 				if (book.getStatus() == Constants.BOOK_STATUS_AVAILABLE) {
 					book.setStatus(Constants.BOOK_STATUS_ISSUED);
 					issue.setBook(book);
@@ -73,22 +71,11 @@ public class IssueRestController {
 					issue1.add(issueDetail);
 
 					member.setIssue(issue1);
-
 					userService.save(member);
-					String issueJson = Obj.writeValueAsString(issueDetail);
-
-					return new ResponseEntity<String>("BookIssued" + issueJson, HttpStatus.OK);
-				} else {
-
-					return new ResponseEntity<String>("Book is not available", HttpStatus.OK);
 				}
-			} catch (JsonProcessingException e) {
-
-				e.printStackTrace();
-			}
-
-			return Constants.getResponseEntity(Constants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+				return new ResponseEntity<String>("BookIssued to Member " + member.getId(), HttpStatus.OK);
+				
+		} 
 		
 		
 		// ==============================================================
@@ -96,43 +83,23 @@ public class IssueRestController {
 		// ==============================================================
 
 		@PostMapping("/save/{ids}")
-		public ResponseEntity<String> issueBooks(@PathVariable ("ids")List<Long> ids,
-				@RequestBody Issue issue) {
-		
-			
-			User member = userService.getMemberById(issue.getUser().getId());
-
-			try {
-				if (member != null) {
-
-					List<Issue> issuedList = new ArrayList<>();
-					for (Long i : ids) {
-						Book book = bookService.getBook(i);
-						if (book != null) {
-							if (book.getStatus() == Constants.BOOK_STATUS_AVAILABLE) {
-								book.setStatus(Constants.BOOK_STATUS_ISSUED);
-								bookService.saveBook(book);
-								Issue issue1 = issueService.issueBooks(member, book, issue);
-								issuedList.add(issue1);
-							}
-						} else {
-							return new ResponseEntity<String>("Book is not available ..... Please resselct the Books",
-									HttpStatus.NOT_ACCEPTABLE);
-						}
-
-					}
-					member.setIssue(issuedList);
-					userService.save(member);
-					return new ResponseEntity<String>("BOOKS ARE ISSUED SUCCESSFULLY TO THE USER", HttpStatus.OK);
-				} else {
-					return new ResponseEntity<String>("Member Does not exist", HttpStatus.NOT_FOUND);
+		public ResponseEntity<String> issueBooks(@PathVariable("ids") List<Long> ids, @RequestBody Issue issue) {
+			User member = userService.getMember(issue.getUser().getId()).get();
+			List<Issue> issuedList = new ArrayList<>();
+			for (Long i : ids) {
+				Book book = bookService.getBookById(i).get();
+				if (book.getStatus() == Constants.BOOK_STATUS_AVAILABLE) {
+					book.setStatus(Constants.BOOK_STATUS_ISSUED);
+					bookService.saveBook(book);
+					Issue issue1 = issueService.issueBooks(member, book, issue);
+					issuedList.add(issue1);
 				}
-			} catch (Exception e) {
-				e.printStackTrace();
 			}
-			return Constants.getResponseEntity(Constants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+
+			member.setIssue(issuedList);
+			userService.save(member);
+			return new ResponseEntity<String>("BOOKS ARE ISSUED SUCCESSFULLY TO THE USER", HttpStatus.OK);
 		}
-	
 	
 	
 // ==============================================================
@@ -149,7 +116,7 @@ public class IssueRestController {
 					book.setStatus(Constants.BOOK_STATUS_AVAILABLE);
 					issue.setBook(book);
 					bookService.saveBook(book);
-					User member = userService.getMemberById(issue.getUser().getId());
+					User member = userService.getMember(issue.getUser().getId()).get();
 					member.getIssue().remove(issue);
 					userService.save(member);
 			 	issueService.returnBookUpdation(issue);
@@ -177,93 +144,60 @@ public class IssueRestController {
 	@PutMapping("/return/books/{user_id}/{book_ids}")
 	public ResponseEntity<String> returnBooks(@PathVariable("user_id") Long id, @PathVariable List<Long> book_ids) {
 
-		User user = userService.getMemberById(id);
-
-		try {
-			if (user != null) {
-				for (Long b_id : book_ids) {
-
-					Book book = bookService.getBook(b_id);
-
-					book.setStatus(Constants.BOOK_STATUS_AVAILABLE);
-					Issue issue = issueService.getBookIssueDetails(book);
-					user.getIssue().remove(issue);
-					bookService.saveBook(book);
-					issueService.returnBookUpdation(issue);
-
-				}
-
-				userService.save(user);
-				return new ResponseEntity<String>("Books Returned Successfully", HttpStatus.OK);
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
+		User user = userService.getMember(id).get();
+		for (Long b_id : book_ids) {
+			Book book = bookService.getBookById(b_id).get();
+			book.setStatus(Constants.BOOK_STATUS_AVAILABLE);
+			Issue issue = issueService.getBookIssueDetails(book);
+			user.getIssue().remove(issue);
+			bookService.saveBook(book);
+			issueService.returnBookUpdation(issue);
 		}
-		return Constants.getResponseEntity("Book Not Returned: Invalid Input", HttpStatus.INTERNAL_SERVER_ERROR);
+		userService.save(user);
+		return new ResponseEntity<String>("Books Returned Successfully", HttpStatus.OK);
 	}
 	
 	
+	
+	
+	// ==============================================================
+				// Issue Records  Api 	(Admin)
+	// ==============================================================
 	@GetMapping("/record")
-	public ResponseEntity<List<Issue>> getRecord(){
+	public ResponseEntity<List<Issue>> getRecord() {
 		List<Issue> recordList = issueService.getRecordList();
-		if(recordList != null) {
-			return new ResponseEntity<List<Issue>>(recordList,HttpStatus.OK);
-		}
-		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		return new ResponseEntity<List<Issue>>(recordList, HttpStatus.OK);
 	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
 	
 	
 	// ==============================================================
 			// Check Fine Status Api 	(Admin)
 		// ==============================================================
 		@GetMapping("/fine")
-		public ResponseEntity<String> checkFineStatus(@RequestParam("issue_id") Long id)  throws NoSuchIssueIdFoundException{
-
+		public ResponseEntity<String> checkFineStatus(@RequestParam("issue_id") Long id) {
 			Issue issue = issueService.getIssueDetailsById(id).get();
-			if(issue == null) {
-				throw new NoSuchIssueIdFoundException("Issue Id Does not exist");
-			}
 			String msg = "";
-				if(issue.getReturned() == Constants.BOOK_RETURNED) {
-					
-					Date expected_date = issue.getExpectedDateOfReturn();
-						Date return_date = issue.getReturnDate();
-
-						int result = issueService.compareDates(expected_date, return_date);
-
-						if (result < 0) {
-							msg = "fine applicable";
-							} 
-						else {
-							msg = "no fine Applicable";
-							}
-				}else {
-					
-					return new ResponseEntity<String>("Book is not returned yet", HttpStatus.OK);
+			if (issue.getReturned() == Constants.BOOK_RETURNED) {
+				Date expected_date = issue.getExpectedDateOfReturn();
+				Date return_date = issue.getReturnDate();
+				int result = issueService.compareDates(expected_date, return_date);
+				if (result < 0) {
+					msg = "fine applicable";
+				} else {
+					msg = "no fine Applicable";
 				}
-				
-						return new ResponseEntity<String>(msg, HttpStatus.OK);
-		
+			} else {
+
+				return new ResponseEntity<String>("Book is not returned yet", HttpStatus.OK);
+			}
+
+			return new ResponseEntity<String>(msg, HttpStatus.OK);
+
 		}
 		
-		
-		@GetMapping("/find/{id}")
-		public ResponseEntity<Issue> getiss(@PathVariable Long id) {
-			return new ResponseEntity<Issue>(issueService.getIssueDetail(id), HttpStatus.OK);
-			
-		}
+	
 		
 		
 		

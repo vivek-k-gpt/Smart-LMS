@@ -2,6 +2,7 @@ package com.gl.smartlms.restController;
 
 import java.util.List;
 
+
 import java.util.Optional;
 
 import javax.validation.Valid;
@@ -22,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+
 import com.gl.smartlms.advice.AuthenticationFailedException;
 import com.gl.smartlms.advice.RegistrationFailedException;
 import com.gl.smartlms.constants.Constants;
@@ -35,82 +36,58 @@ public class UserRestController {
 
 	@Autowired
 	private UserService userService;
-	ObjectMapper Obj = new ObjectMapper();
+	
 
 	// ==============================================================
-	// User Login API	(User+Admin)
+	// User Login API (User+Admin)
 	// ==============================================================
 
 	@PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> getUserValidate(@RequestParam String username, @RequestParam String password) {
-
 		Optional<User> user = Optional.ofNullable(userService.getUserValidate(username, password));
-
 		if (user.isEmpty()) {
 			throw new AuthenticationFailedException("Authentication Failed ...... Invalid Credentials");
 		}
-
 		if (user.get().getActive() == 1) {
 			return new ResponseEntity<String>("User Logged in Succesfully", HttpStatus.OK);
-
 		} else {
-
 			return new ResponseEntity<String>("User Not Active.......Contact Administration", HttpStatus.OK);
 		}
-
 	}
 
 	// ==============================================================
-	// User Register API		(User)
+	// User Register API (User)
 	// ==============================================================
 
 	@PostMapping(value = "/register", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> registerUser(@Valid @RequestBody User user) {
-		user.setActive(0);		user.setRole("User");
-		Optional<User> user1 = Optional.ofNullable(userService.registerUser(user));
-
+		user.setActive(0);
+		user.setRole("User");
+		Optional<User> user1 = Optional.ofNullable(userService.save(user));
 		if (user1.isEmpty()) {
 			throw new RegistrationFailedException("Registration Failed");
 		}
-
 		return new ResponseEntity<String>("User Registered Sucessfully", HttpStatus.CREATED);
-
 	}
 
-	
-	
-
 	// ==============================================================
-	// Add Librarian API API				(Admin)
+	// Add Librarian API API (Admin)
 	// ==============================================================
 	@RequestMapping(value = "/admin/register", method = RequestMethod.POST)
 	public ResponseEntity<String> saveMember(@Valid @RequestBody User user) {
-			user.setActive(1); user.setRole(Constants.ROLE_LIBRARIAN);
-		Optional<User> user1 = Optional.ofNullable(userService.registerUser(user));
-		if(user1.isEmpty()) {
+		user.setActive(1);
+		user.setRole(Constants.ROLE_LIBRARIAN);
+		Optional<User> user1 = Optional.ofNullable(userService.save(user));
+		if (user1.isEmpty()) {
 			throw new RegistrationFailedException("Registration Failed ......");
-			}
+		}
 		return new ResponseEntity<String>("User Registered Successfully", HttpStatus.CREATED);
 	}
-	
-	
-	
 
-	// ============================================================== ============================================================== ==============================================================//
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
 	// ==============================================================
-	// User Count API		(Admin)
+	// User Count API (Admin)
 	// ==============================================================
 
 	@GetMapping("/count")
@@ -121,11 +98,10 @@ public class UserRestController {
 		} else {
 			return Constants.getResponseEntity(Constants.NO_CONTENT, HttpStatus.NO_CONTENT);
 		}
-		
 	}
 
 	// ==============================================================
-	// Faculty Member Count API   (Admin)
+	// Faculty Member Count API (Admin)
 	// ==============================================================
 
 	@GetMapping("/count/faculty")
@@ -138,7 +114,7 @@ public class UserRestController {
 	}
 
 	// ==============================================================
-	// Student Member Count API		(Admin)
+	// Student Member Count API (Admin)
 	// ==============================================================
 
 	@GetMapping("/count/student")
@@ -150,17 +126,17 @@ public class UserRestController {
 		return Constants.getResponseEntity(Constants.NO_CONTENT, HttpStatus.NO_CONTENT);
 	}
 
+	
 
 	// ==============================================================
-	// List Users Api(Sorted)			(Admin)
+	// List Users Api(Sorted) (Admin)
 	// ==============================================================
 	@GetMapping("/user")
 	public ResponseEntity<List<User>> showAllUsers() {
 		List<User> list = userService.getAll();
 		return new ResponseEntity<List<User>>(list, HttpStatus.FOUND);
 	}
-	
-	
+
 	// ==============================================================
 	// List Student Member Api (Admin)
 	// ==============================================================
@@ -170,10 +146,8 @@ public class UserRestController {
 		return new ResponseEntity<List<User>>(list, HttpStatus.FOUND);
 	}
 
-	
-	
 	// ==============================================================
-	// List Faculty Member Api		(Admin)
+	// List Faculty Member Api (Admin)
 	// ==============================================================
 	@GetMapping("/faculty")
 	public ResponseEntity<List<User>> showAllFaculties() {
@@ -182,7 +156,7 @@ public class UserRestController {
 	}
 
 	// ==============================================================
-	// List Active Member Api		(Admin)
+	// List Active Member Api (Admin)
 	// ==============================================================
 	@GetMapping("/active")
 	public ResponseEntity<List<User>> showAllActive() {
@@ -190,9 +164,8 @@ public class UserRestController {
 		return new ResponseEntity<List<User>>(list, HttpStatus.FOUND);
 	}
 
-
 	// ==============================================================
-	// List Active Member Api		(Admin)
+	// List Active Member Api (Admin)
 	// ==============================================================
 	@GetMapping("/inactive")
 	public ResponseEntity<List<User>> showAllInActive() {
@@ -201,8 +174,9 @@ public class UserRestController {
 	}
 
 
+
 	// ==============================================================
-	// Blocking Member Api			(Admin)
+	// Blocking Member Api (Admin)
 	// ==============================================================
 	@PutMapping("/block/{id}")
 	public ResponseEntity<String> blockUser(@PathVariable Long id) {
@@ -213,16 +187,15 @@ public class UserRestController {
 			return new ResponseEntity<String>("User Blocked Successfully", HttpStatus.ACCEPTED);
 		}
 		return new ResponseEntity<String>("User is already Blocked", HttpStatus.OK);
-		
 	}
 
 	// ==============================================================
-	// UnBlocking Member Api		(Admin)
+	// UnBlocking Member Api (Admin)
 	// ==============================================================
 
 	@PutMapping("/unblock/{id}")
 	public ResponseEntity<String> unlockUser(@PathVariable Long id) {
-		User user = userService.getMemberById(id);
+		User user = userService.getMember(id).get();
 		if (user.getActive() == 0) {
 			user.setActive(1);
 			userService.save(user);
@@ -231,8 +204,9 @@ public class UserRestController {
 		return new ResponseEntity<String>("User is Not Blocked", HttpStatus.ACCEPTED);
 	}
 
+
 	// ==============================================================
-	// Find Member API(change)		(Admin)
+	// Find Member API(change) (Admin)
 	// ==============================================================
 
 	@GetMapping(value = "/find/{id}")
@@ -240,12 +214,12 @@ public class UserRestController {
 		User user = userService.getMember(id).get();
 		return new ResponseEntity<User>(user, HttpStatus.FOUND);
 	}
-			
 
+	
 
 	// ==============================================================
-	// Update Member API		(Admin)
-	// ==============================================================
+	// Update Member API (Admin)
+	// ============================================================
 
 	@PutMapping("/update")
 	public ResponseEntity<String> updateMember(@Valid @RequestBody User member) {
@@ -255,24 +229,21 @@ public class UserRestController {
 				HttpStatus.ACCEPTED);
 	}
 
-	
+
 	// ==============================================================
-	// Delete Member API		(Admin)
+	// Delete Member API (Admin)
 	// ==============================================================
 	@RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
 	public ResponseEntity<String> removeUser(@PathVariable Long id) {
 		User member = userService.getMember(id).get();
-
 		if (userService.hasUsage(member)) {
 			userService.deleteMember(id);
 			return new ResponseEntity<String>("User Deleted Successfully", HttpStatus.OK);
-
 		} else {
 			return new ResponseEntity<String>(
 					"User can not be deleted............. (Member In use -: Books Are not Returned)",
 					HttpStatus.NOT_ACCEPTABLE);
 		}
-
 	}
 
 }

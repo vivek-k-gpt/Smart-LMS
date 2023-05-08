@@ -21,9 +21,9 @@ public interface UserService {
  
 	public List<User> getAll();
 
-	public User addNewMember(User member);
 	
-	public User save(User user);
+	
+	
 	
 	public Optional<User> getMember(Long id);
 
@@ -34,11 +34,11 @@ public interface UserService {
 	public Long getStudentsCount();
 	
 	 
-	public User getMemberById(Long id);
+	
 
 	public User getUserValidate(String username, String password);
 
-	public User registerUser(User user);
+	public User save(User user);
 
 	public List<User> getAllStudent();
 

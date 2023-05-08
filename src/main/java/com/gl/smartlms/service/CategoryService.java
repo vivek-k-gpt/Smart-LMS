@@ -26,7 +26,7 @@ public interface CategoryService {
 	
 	public List<Category> getAllBySort();
 
-	public Optional<Category> getCategory(String name);
+	public Optional<Category> getCategoryByName(String name);
 	
 	public boolean hasUsage(Category category);
 

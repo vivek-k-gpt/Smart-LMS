@@ -47,11 +47,36 @@ public class GlobalExceptionHandler {
 	
 
 	
-//	@ExceptionHandler(NoSuchIssueIdFoundException.class)
-//	public ResponseEntity<String> handleNosuchIssueIdFoundException(NoSuchIssueIdFoundException error){
-//		
-//		return  ResponseEntity.status(HttpStatus.NOT_FOUND).body(error.getMessage());
-//	}
+	@ExceptionHandler(CategoryNotFoundException.class)
+	public ResponseEntity<Object> handleCategoryException(CategoryNotFoundException ex){
+		String message = ex.getMessage();
+		List<String> details = new ArrayList<>();
+		details.add("Category Not Created");
+		ApiError errors = new ApiError(message,details,HttpStatus.NOT_FOUND,LocalDateTime.now());
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errors);
+	}
+	
+	
+	
+	
+	@ExceptionHandler(BookNotFoundException.class)
+	public ResponseEntity<Object> handleBookNotFoundException(BookNotFoundException ex){
+		String message = ex.getMessage();
+		List<String> details = new ArrayList<>();
+		details.add("Book Is Not available");
+		ApiError errors = new ApiError(message,details,HttpStatus.NOT_ACCEPTABLE,LocalDateTime.now());
+		return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(errors);
+	}
+	
+	
+	@ExceptionHandler(BookTagAlreadyExistException.class)
+	public ResponseEntity<Object> handleBookTagException(BookTagAlreadyExistException ex){
+		String message = ex.getMessage();
+		List<String> details = new ArrayList<>();
+		details.add("Book Can not be added");
+		ApiError errors = new ApiError(message,details,HttpStatus.NOT_ACCEPTABLE,LocalDateTime.now());
+		return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(errors);
+	}
 	
 	
 	

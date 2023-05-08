@@ -14,7 +14,8 @@ import org.springframework.stereotype.Service;
 import com.gl.smartlms.model.Book;
 import com.gl.smartlms.model.Category;
 import com.gl.smartlms.repository.BookRepository;
-
+import com.gl.smartlms.advice.BookNotFoundException;
+import com.gl.smartlms.advice.NoContentFoundException;
 import com.gl.smartlms.constants.*;
 
 
@@ -44,18 +45,25 @@ public class BookServiceImpl  implements BookService{
 
 	@Override
 	public Optional<Book> getBookById(Long id) {
-		return bookRepository.findById(id);
+		Optional<Book> book = bookRepository.findById(id);
+		if(book.isEmpty()) {
+			throw new BookNotFoundException("No book is found with id :" + id);
+		}
+		return book;
 	}
 
 	@Override
 	public List<Book> getAll() {
-		return bookRepository.findAll();
+		
+		List<Book> list = bookRepository.findAll();
+		if(list.isEmpty()) {
+			throw new NoContentFoundException("No Book is Present List is Empty");
+		}
+		
+		return list;
 	}
 
-	@Override
-	public Book getBook(Long id) {
-		return bookRepository.findById(id).get();
-	}
+
 	
 	@Override
 	public Long getTotalCount() {
@@ -65,23 +73,40 @@ public class BookServiceImpl  implements BookService{
 	@Override
 	public List<Book> getByAuthorName(String authors) {
 	
-		return bookRepository.findByAuthors(authors);
+		List<Book> book = bookRepository.findByAuthors(authors);
+		if(book.isEmpty()) {
+			throw new BookNotFoundException("No Book is Found For Author :"+ authors);
+		}
+		return book;
 	}
 
 	@Override
 	public List<Book> getBooksByIdList(List<Long> ids) {
-		return bookRepository.findAllById(ids);
+		List<Book> book =	 bookRepository.findAllById(ids);
+		 if(book.isEmpty()) {
+				throw new NoContentFoundException("The list is Empty ...No book ..plz make Valid Selection");
+			}
+			return book;
 	}
 	@Override
 	public List<Book> getByCategory(Category category) {
 		
-		return bookRepository.findByCategory(category);
+		List<Book> book = bookRepository.findByCategory(category);
+		if(book.isEmpty()) {
+			throw new NoContentFoundException("The list is Empty ...No book is this Category");
+		}
+		return book;
 	}
 
 	@Override
 	public List<Book> getBookWithTitle(String title) {
 		
-		return bookRepository.findByTitle(title);
+		List<Book> list =bookRepository.findByTitle(title);
+		if(list.isEmpty()) {
+			throw new NoContentFoundException("No Book is Present List is Empty");
+		}
+		
+		return list;
 	}
 
 	@Override
@@ -92,36 +117,65 @@ public class BookServiceImpl  implements BookService{
 
 	@Override
 	public List<Book> geAvailabletByCategory(Category category) {
-		return bookRepository.findByCategoryAndStatus(category, Constants.BOOK_STATUS_AVAILABLE);
+		List<Book>  book = bookRepository.findByCategoryAndStatus(category, Constants.BOOK_STATUS_AVAILABLE);
+		
+		if(book.isEmpty()) {
+			throw new NoContentFoundException("The list is Empty ...No book is this Category");
+		}
+		return book;
 	}
 
 	@Override
 	public List<Book> getBypublisherName(String publisher) {
-		return bookRepository.findByPublisher(publisher);
+		List<Book> book = bookRepository.findByPublisher(publisher);
+		if(book.isEmpty()) {
+			throw new NoContentFoundException("No Book is present for the Publisher"+publisher);
+		}
+		return book;
 	}
 
 	@Override
 	public List<Book> checkAvailableBooks() {
 		
-		return bookRepository.findAllAvailableBooks(Constants.BOOK_STATUS_AVAILABLE);
+		List<Book> book = bookRepository.findAllAvailableBooks(Constants.BOOK_STATUS_AVAILABLE);
+		if(book.isEmpty()) {
+			throw new NoContentFoundException("No Book Is Available");
+		}
+		return book;
 	}
 
 	@Override
 	public List<Book> checkIssuedBooks() {
-			return bookRepository.findAllIssuedBooks(Constants.BOOK_STATUS_ISSUED);
+		
+		List<Book> book =  bookRepository.findAllIssuedBooks(Constants.BOOK_STATUS_ISSUED);
+		
+		
+		if(book.isEmpty()) {
+			throw new NoContentFoundException("No Book is Issued");
+			
+		}
+		return book;
 	}
 
 
 
 	@Override
 	public List<Book> listCategoryIssuedBooks(Category category) {
-		return bookRepository.findByCategoryAndStatus(category, Constants.BOOK_STATUS_ISSUED);
+		List<Book> book = bookRepository.findByCategoryAndStatus(category, Constants.BOOK_STATUS_ISSUED);
+		if(book.isEmpty()) {
+			throw new NoContentFoundException("No book is Issued in the Category " +category.getName());
+		}
+		return book;
 	}
 
 	@Override
 	public List<Book> listCategoryAvailableBooks(Category category) {
 		
-		return  bookRepository.findByCategoryAndStatus(category, Constants.BOOK_STATUS_AVAILABLE);
+		List<Book> book =  bookRepository.findByCategoryAndStatus(category, Constants.BOOK_STATUS_AVAILABLE);
+		if(book.isEmpty()) {
+			throw new NoContentFoundException("No book is Available in the Category " +category.getName());
+		}
+		return book;
 	}
 
 	@Override
@@ -147,7 +201,8 @@ public class BookServiceImpl  implements BookService{
 	@Override
 	public Book getByTag(String tag) {
 		
-		return bookRepository.findByTag(tag);
+	return  bookRepository.findByTag(tag);
+
 	}
 	
 

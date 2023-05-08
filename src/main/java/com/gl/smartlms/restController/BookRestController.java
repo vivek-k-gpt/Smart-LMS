@@ -1,8 +1,9 @@
 package com.gl.smartlms.restController;
 
 import org.springframework.http.HttpStatus;
-import java.util.List;
 
+
+import java.util.List;
 
 import java.util.Optional;
 
@@ -17,17 +18,21 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
+
+import com.gl.smartlms.advice.BookNotFoundException;
+import com.gl.smartlms.advice.BookTagAlreadyExistException;
 import com.gl.smartlms.constants.Constants;
 import com.gl.smartlms.model.Book;
 import com.gl.smartlms.model.Category;
 
 import com.gl.smartlms.service.BookService;
 import com.gl.smartlms.service.CategoryService;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api-book")
@@ -39,8 +44,6 @@ public class BookRestController {
 	@Autowired
 	private CategoryService categoryService;
 
-	ObjectMapper Obj = new ObjectMapper();
-
 // ==============================================================//
 	// Create//
 // ==============================================================//
@@ -50,32 +53,17 @@ public class BookRestController {
 	// ==============================================================
 	@PostMapping("/add/{id}")
 	public ResponseEntity<String> addBook(@RequestBody Book book, @PathVariable("id") Long id) {
-		Optional<Category> optional = categoryService.getCategory(id);
-		try {
-			if (optional.isPresent()) {
-				book.setCategory(optional.get());
-				Book book1 = bookService.getByTag(book.getTag());
-				if (book1 != null) {
-
-					return new ResponseEntity<String>("tag already exist", HttpStatus.NOT_ACCEPTABLE);
-				} else {
-					bookService.addNewBook(book);
-
-					return new ResponseEntity<String>("Book get Added with Title " + book.getTitle() + " and Category "
-							+ optional.get().getName(), HttpStatus.CREATED);
-				}
-
-			} else {
-
-				return new ResponseEntity<String>("Category Not Available ....(First create the category)",
-						HttpStatus.OK);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
+		Category category = categoryService.getCategory(id).get();
+		book.setCategory(category);
+		Book book1 = bookService.getByTag(book.getTag());
+		if (book1 != null) {
+			throw new BookTagAlreadyExistException("Tag is Already Present .....Please Select another Tag");
+		} else {
+			bookService.addNewBook(book);
+			return new ResponseEntity<String>(
+					"Book get Added with Title " + book.getTitle() + " and Category " + category.getName(),
+					HttpStatus.CREATED);
 		}
-
-		return Constants.getResponseEntity(Constants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
-
 	}
 
 // ==============================================================
@@ -127,19 +115,8 @@ public class BookRestController {
 	// ==============================================================
 	@GetMapping("/list")
 	public ResponseEntity<List<Book>> showAllBooks() {
-
 		List<Book> list = bookService.getAll();
-		try {
-			if (list != null) {
-				return new ResponseEntity<List<Book>>(list, HttpStatus.FOUND);
-
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return new ResponseEntity<List<Book>>(HttpStatus.NO_CONTENT);
-
+		return new ResponseEntity<List<Book>>(list, HttpStatus.FOUND);
 	}
 
 	// ==============================================================
@@ -147,117 +124,56 @@ public class BookRestController {
 	// ==============================================================
 	@GetMapping("/list-by-title/{title}")
 	public ResponseEntity<List<Book>> getBytitle(@PathVariable String title) {
-
 		List<Book> list = bookService.getBookWithTitle(title);
-		try {
-			if (list != null) {
-				return new ResponseEntity<List<Book>>(list, HttpStatus.FOUND);
-
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return new ResponseEntity<List<Book>>(HttpStatus.OK);
+		return new ResponseEntity<List<Book>>(list, HttpStatus.FOUND);
 	}
 
 	// ==============================================================
 	// List All Book(By Tagname) Api (Admin + User)
 	// ==============================================================
-	@GetMapping("/list-by-tag/{tag}")
+	@GetMapping("/find/{tag}")
 	public ResponseEntity<Book> findBookBytag(@PathVariable String tag) {
-
 		Book book = bookService.getByTag(tag);
-		try {
-			if (book != null) {
-
-				return new ResponseEntity<Book>(book, HttpStatus.FOUND);
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
+		if (book != null) {
+			return new ResponseEntity<Book>(book, HttpStatus.OK);
 		}
-		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-
+		throw new BookNotFoundException("No book is found with tag " + tag);
 	}
 
 	// ==============================================================
 	// List All Book(By Authors) Api (Admin + User)
 	// ==============================================================
 	@GetMapping(value = "/list-by-author/{authors}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> getBooksByAuthor(@PathVariable("authors") String authors) {
-
+	public ResponseEntity<List<Book>> getBooksByAuthor(@PathVariable("authors") String authors) {
 		List<Book> book = bookService.getByAuthorName(authors);
-		try {
-			if (book != null) {
-
-				String bookJson = Obj.writeValueAsString(book);
-
-				return new ResponseEntity<String>(bookJson, HttpStatus.FOUND);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		return new ResponseEntity<List<Book>>(book, HttpStatus.FOUND);
 	}
 
 	// ==============================================================
 	// List All Book(By publisher) Api (Admin + User)
 	// ==============================================================
-	@GetMapping(value = "/list-by-publisher/{publisher}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> getBooksByPublisher(@PathVariable String publisher) {
-
+	@GetMapping(value = "/list-by-publisher/{publisher}")
+	public ResponseEntity<List<Book>> getBooksByPublisher(@PathVariable String publisher) {
 		List<Book> book = bookService.getBypublisherName(publisher);
-		try {
-			if (book != null) {
-
-				String bookJson = Obj.writeValueAsString(book);
-
-				return new ResponseEntity<String>(bookJson, HttpStatus.OK);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		return new ResponseEntity<List<Book>>(book, HttpStatus.FOUND);
 	}
 
 // ==============================================================
 	// List All Available Books Api (Admin + User)
 // ==============================================================
-	@GetMapping(value = "/available-books", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> getAllAvailableBooks() {
+	@GetMapping(value = "/available", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<Book>> getAllAvailableBooks() {
 		List<Book> availableBooks = bookService.checkAvailableBooks();
-		try {
-			if (availableBooks != null) {
-				String bookJson = Obj.writeValueAsString(availableBooks);
-				return new ResponseEntity<String>(bookJson, HttpStatus.OK);
-			} else {
-				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return Constants.getResponseEntity(Constants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+		return new ResponseEntity<List<Book>>(availableBooks, HttpStatus.OK);
 	}
 
 // ==============================================================
 	// List All Issued Books Api (Admin )
 // ==============================================================
 	@GetMapping("/issued-books")
-	public ResponseEntity<String> getAllIssuedBooks() {
-		List<Book> availableBooks = bookService.checkIssuedBooks();
-		try {
-			if (availableBooks != null) {
-				String bookJson = Obj.writeValueAsString(availableBooks);
-				return new ResponseEntity<String>(bookJson, HttpStatus.OK);
-			} else {
-				return new ResponseEntity<String>("No Book Is Available", HttpStatus.NO_CONTENT);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return Constants.getResponseEntity(Constants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+	public ResponseEntity<List<Book>> getAllIssuedBooks() {
+		List<Book> issuedBooks = bookService.checkIssuedBooks();
+		return new ResponseEntity<List<Book>>(issuedBooks, HttpStatus.OK);
 	}
 
 //==============================================================
@@ -268,92 +184,41 @@ public class BookRestController {
 // List All Books In A category (By Category Name)
 //==============================================================	
 	@GetMapping(value = "/category/all-books/{category_name}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> getAvailableBooksInCategory(@PathVariable("category_name") String name) {
-
-		Optional<Category> category = categoryService.getCategory(name);
-		try {
-			if (category.isPresent()) {
-				List<Book> list = bookService.geAvailabletByCategory(category.get());
-				if (list != null) {
-					String bookJson = Obj.writeValueAsString(list);
-					return new ResponseEntity<String>(bookJson, HttpStatus.FOUND);
-				} else {
-					return new ResponseEntity<String>(Constants.NO_CONTENT, HttpStatus.NO_CONTENT);
-				}
-
-			} else {
-				return new ResponseEntity<String>("Category Does not Exist", HttpStatus.OK);
-			}
-		} catch (JsonProcessingException e) {
-
-			e.printStackTrace();
-		}
-		return Constants.getResponseEntity(Constants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+	public ResponseEntity<List<Book>> getAvailableBooksInCategory(@PathVariable("category_name") String name) {
+		Category category1 = categoryService.getCategoryByName(name).get();
+		List<Book> list = bookService.geAvailabletByCategory(category1);
+		return new ResponseEntity<List<Book>>(list, HttpStatus.FOUND);
 	}
 
 //==============================================================
 //List All Books In A category (By Category Id)
 //==============================================================		
 	@GetMapping(value = "/category/all/{category_id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> findBooksByCategory(@PathVariable("category_id") Long id) {
-		String bookJson;
-		Optional<Category> category = categoryService.getCategory(id);
-		try {
-			if (category.isPresent()) {
-				List<Book> list = bookService.getByCategory(category.get());
+	public ResponseEntity<List<Book>> findBooksByCategory(@PathVariable("category_id") Long id) {
 
-				bookJson = Obj.writeValueAsString(list);
-				return new ResponseEntity<String>(bookJson, HttpStatus.FOUND);
-			} else {
-				return new ResponseEntity<String>("Categorgy not Exist", HttpStatus.OK);
-
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return Constants.getResponseEntity(Constants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
-
+		Category category = categoryService.getCategory(id).get();
+		List<Book> list = bookService.getByCategory(category);
+		return new ResponseEntity<List<Book>>(list, HttpStatus.FOUND);
 	}
 
 //==============================================================
 //List All Issued Books In A category (By Category Name)
 //==============================================================
-	@GetMapping(value = "/category/issued/all/{type}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> getAllIssuedBooksInCategory(@PathVariable String type) {
-		Optional<Category> category = categoryService.getCategory(type);
-		try {
-			if (category.isPresent()) {
-				List<Book> issuedBooks = bookService.listCategoryIssuedBooks(category.get());
-				String bookJson = Obj.writeValueAsString(issuedBooks);
-				return new ResponseEntity<String>(bookJson, HttpStatus.OK);
-			} else {
-				return new ResponseEntity<String>("No Book is Issued in this category", HttpStatus.NO_CONTENT);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return Constants.getResponseEntity(Constants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+	@GetMapping(value = "/category/issued/all/{type}")
+	public ResponseEntity<List<Book>> getAllIssuedBooksInCategory(@PathVariable String type) {
+		Category category = categoryService.getCategoryByName(type).get();
+		List<Book> issuedBooks = bookService.listCategoryIssuedBooks(category);
+		return new ResponseEntity<List<Book>>(issuedBooks, HttpStatus.OK);
 	}
 
 //==============================================================
 //List All Available Books(Not Issued) In A category (By Category Name)
 //==============================================================
-	@GetMapping(value = "/category/available/all/{type}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> getAllAvailableBooksInCategory(@PathVariable String type) {
-		Optional<Category> category = categoryService.getCategory(type);
-		try {
-			if (category.isPresent()) {
-				List<Book> availableBooks = bookService.listCategoryAvailableBooks(category.get());
-				String bookJson = Obj.writeValueAsString(availableBooks);
-				return new ResponseEntity<String>(bookJson, HttpStatus.OK);
-			} else {
-				return new ResponseEntity<String>("No Book is Available in this category", HttpStatus.NO_CONTENT);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return Constants.getResponseEntity(Constants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+	@GetMapping(value = "/category/available/all/{type}")
+	public ResponseEntity<List<Book>> getAllAvailableBooksInCategory(@PathVariable String type) {
+		Category category = categoryService.getCategoryByName(type).get();
+		List<Book> availableBooks = bookService.listCategoryAvailableBooks(category);
+		return new ResponseEntity<List<Book>>(availableBooks, HttpStatus.OK);
 	}
 
 //==============================================================
@@ -363,71 +228,39 @@ public class BookRestController {
 // ==============================================================
 // find All Book(By id) Api (Admin + User)
 // ==============================================================
-	@GetMapping(value = "find/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> findBookById(@PathVariable Long id) {
-
-		Optional<Book> optional = bookService.getBookById(id);
-
-		try {
-			if (optional.isPresent()) {
-				Book book = optional.get();
-				String bookJson = Obj.writeValueAsString(book);
-				return new ResponseEntity<>(bookJson, HttpStatus.FOUND);
-			} else {
-				return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return Constants.getResponseEntity(Constants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+	@GetMapping(value = "find/{id}")
+	public ResponseEntity<Book> findBookById(@PathVariable Long id) {
+		Book book = bookService.getBookById(id).get();
+		return new ResponseEntity<Book>(book, HttpStatus.FOUND);
 	}
 
 //==============================================================
 //find All Books  By List of Book ids (Admin + User)
 //==============================================================
-	@GetMapping(value = "/find-books/{ids}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> findBooksWithIdList(@PathVariable List<Long> ids) {
+	@GetMapping(value = "/find-books/{ids}")
+	public ResponseEntity<List<Book>> findBooksWithIdList(@PathVariable List<Long> ids) {
 		List<Book> list = bookService.getBooksByIdList(ids);
-		try {
-			String bookJson = Obj.writeValueAsString(list);
-			return new ResponseEntity<String>(bookJson, HttpStatus.FOUND);
-		} catch (JsonProcessingException e) {
-
-			e.printStackTrace();
-		}
-		return new ResponseEntity<>(HttpStatus.OK);
+		return new ResponseEntity<List<Book>>(list, HttpStatus.FOUND);
 	}
 
-	
-	
-	
-	
 //==============================================================
 //			Update
 //==============================================================
-		
-	
-	
-	
-	
+
 //==============================================================
 //	Update Book Details (SAMECategory) (Admin)
 //==============================================================	
 	@PutMapping("/update")
-	public ResponseEntity<String> updateBook(@RequestBody Book book) {
-		Optional<Book> optional = bookService.getBookById(book.getId());
-		if (optional.isPresent()) {
-			Optional<Category> category = categoryService.getCategory(optional.get().getCategory().getId());
+	public ResponseEntity<String> updateBook(@Valid @RequestBody Book book) {
+		Book book1 = bookService.getBookById(book.getId()).get();
 
-			book.setCategory(category.get());
-			book.setCreateDate(optional.get().getCreateDate());
-			book.setStatus(optional.get().getStatus());
-			bookService.saveBook(book);
-			return new ResponseEntity<String>("Succesfully Updated Book Details", HttpStatus.ACCEPTED);
-		}
-		return new ResponseEntity<String>("Details Not updated", HttpStatus.NOT_ACCEPTABLE);
+		Optional<Category> category = categoryService.getCategory(book.getCategory().getId());
 
+		book.setCategory(category.get());
+		book.setCreateDate(book1.getCreateDate());
+		book.setStatus(book1.getStatus());
+		bookService.saveBook(book);
+		return new ResponseEntity<String>("Succesfully Updated Book Details", HttpStatus.ACCEPTED);
 	}
 
 //==============================================================
@@ -436,73 +269,44 @@ public class BookRestController {
 	@PutMapping(value = "/update/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> updateBook(@RequestBody Book book, @PathVariable Long id) {
 
-		Optional<Book> optional = bookService.getBookById(book.getId());
-		if (optional.isPresent()) {
-			Optional<Category> category = categoryService.getCategory(id);
+		Book book1 = bookService.getBookById(book.getId()).get();
 
-			Category oldcategory = optional.get().getCategory();
+		Category category = categoryService.getCategory(id).get();
 
-			oldcategory.getBooks().remove(optional.get());
+		Category oldcategory = book1.getCategory();
 
-			book.setCategory(category.get());
-			book.setCreateDate(optional.get().getCreateDate());
-			book.setStatus(optional.get().getStatus());
+		oldcategory.getBooks().remove(book1);
 
-			bookService.saveBook(book);
+		book.setCategory(category);
+		book.setCreateDate(book1.getCreateDate());
+		book.setStatus(book1.getStatus());
 
-			try {
-				String bookJson = Obj.writeValueAsString(book);
-				return new ResponseEntity<String>(
-						"Succesfully Updated Book Details category of type" + category.get().getName() + " " + bookJson,
-						HttpStatus.ACCEPTED);
-			} catch (JsonProcessingException e) {
-
-				e.printStackTrace();
-			}
-
-		}
-		return new ResponseEntity<String>("Details Not updated", HttpStatus.NOT_ACCEPTABLE);
-
+		bookService.saveBook(book);
+		return new ResponseEntity<String>("Succesfully Updated Book Details category of type" + category.getName(),
+				HttpStatus.ACCEPTED);
 	}
 
-	
-	
-	
-	
-	
 //==============================================================
 //	Delete
 //==============================================================
-	
-	
+
 //==============================================================
 //Delete Book By Id (Admin)
 //==============================================================
 	@DeleteMapping("/delete/{id}")
 	public ResponseEntity<String> deleteBook(@PathVariable Long id) {
-		Book book = bookService.getBook(id);
-		try {
-			if (book != null) {
-				if (book.getStatus() == Constants.BOOK_STATUS_ISSUED) {
+		Book book = bookService.getBookById(id).get();
 
-					return new ResponseEntity<String>("Book in use Can net be delete (book is not returnned)",
-							HttpStatus.NOT_ACCEPTABLE);
+		if (book.getStatus() == Constants.BOOK_STATUS_ISSUED) {
 
-				} else {
-					bookService.delete(book);
-					return new ResponseEntity<String>("Book Deleted Succesfully", HttpStatus.OK);
-				}
+			return new ResponseEntity<String>("Book in use Can net be delete (book is not returnned)",
+					HttpStatus.NOT_ACCEPTABLE);
 
-			} else {
-				return new ResponseEntity<String>("Book Not found", HttpStatus.NOT_FOUND);
-			}
+		} else {
+			bookService.delete(book);
+			return new ResponseEntity<String>("Book Deleted Succesfully", HttpStatus.OK);
 		}
 
-		catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return Constants.getResponseEntity(Constants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
 }

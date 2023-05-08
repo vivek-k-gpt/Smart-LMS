@@ -24,7 +24,7 @@ public interface BookService {
 
 	public List<Book> getAll();
 	
-	public Book getBook(Long id);
+	
 
 	public Long getTotalCount();
 
