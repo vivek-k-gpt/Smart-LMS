@@ -1,0 +1,23 @@
+#spring.queries.users-query=select username, password, active from user where username=?
+#spring.queries.roles-query=select username, role from user where username=?
+
+#spring.jackson.serialization.fail-on-empty-beans=false
+
+server:
+    port: 8899
+spring:
+    datasource:
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        password: root
+        url: jdbc:mysql://localhost:3306/librarydb?useSSL=true
+        username: root
+    jackson:
+        serialization:
+            fail-on-empty-beans: false
+    jpa:
+        hibernate:
+            ddl-auto: update
+        properties:
+            hibernate:
+                dialect: org.hibernate.dialect.MySQLDialect
+        show-sql: true
