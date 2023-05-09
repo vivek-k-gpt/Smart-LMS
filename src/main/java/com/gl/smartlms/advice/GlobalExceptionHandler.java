@@ -41,6 +41,14 @@ public class GlobalExceptionHandler {
 
 	
 	
+	@ExceptionHandler(UserNameNotFoundException.class)
+	public ResponseEntity<Object> handleUserNAmeException(UserNameNotFoundException ex){
+		String message = ex.getMessage();
+		List<String> details = new ArrayList<>();
+		details.add("User Is Not Avavilable");
+		ApiError errors = new ApiError(message,details,HttpStatus.NOT_FOUND,LocalDateTime.now());
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errors);
+	}
 	
 	
 	

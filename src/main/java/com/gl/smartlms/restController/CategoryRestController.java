@@ -85,11 +85,10 @@ public class CategoryRestController {
 	@GetMapping("/total/count")
 	public ResponseEntity<String> countAllCategory() {
 		Long categoryCount = categoryService.getTotalCount();
-		if (categoryCount != 0) {
+	
 			return new ResponseEntity<String>(categoryCount.toString(), HttpStatus.OK);
 		}
-		return Constants.getResponseEntity(Constants.NO_CONTENT, HttpStatus.NO_CONTENT);
-	}
+	
 
 	// ==============================================================
 	// Find Category By Id Api (Admin)
@@ -103,7 +102,7 @@ public class CategoryRestController {
 	// ==============================================================
 	// Delete Category By Id Api (Admin)
 	// ==============================================================
-	@DeleteMapping("/delete/")
+	@DeleteMapping("/delete/{id}")
 	public ResponseEntity<String> deleteCategoryById(@PathVariable Long id) {
 		Category category = categoryService.getCategory(id).get();
 		if (categoryService.hasUsage(category)) {

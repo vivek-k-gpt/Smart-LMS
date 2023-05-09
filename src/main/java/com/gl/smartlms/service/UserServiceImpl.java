@@ -1,16 +1,16 @@
 package com.gl.smartlms.service;
 
-import java.util.Date;
-
 import java.util.List;
 import java.util.Optional;
 
-import javax.validation.Valid;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.gl.smartlms.advice.NoContentFoundException;
+import com.gl.smartlms.advice.UserNameNotFoundException;
 import com.gl.smartlms.advice.UserNotFoundException;
 import com.gl.smartlms.constants.Constants;
 import com.gl.smartlms.model.User;
@@ -23,6 +23,8 @@ public class UserServiceImpl implements UserService {
 private UserRepository userRepository;
 
 
+@Autowired(required=true)
+private BCryptPasswordEncoder beBCryptPasswordEncoder;
 
 public Long getTotalCount() {
 	return userRepository.count();
@@ -80,7 +82,7 @@ public Long getStudentsCount() {
 
 	@Override
 	public User save(User user) {
-
+		user.setPassword(beBCryptPasswordEncoder.encode(user.getPassword()) );
 		return userRepository.save(user);
 	}
 
@@ -147,6 +149,23 @@ public Long getStudentsCount() {
 
 
 
+	@Override
+	public List<User> getAllUser() {
+		
+		return userRepository.findAll();
+	}
 
+
+
+	@Override
+	public void findByUsername(String username) {
+		
+		Optional<User> user = Optional.ofNullable(userRepository.findByUsername(username));
+		if(user.isPresent()) {
+			throw new UserNameNotFoundException("Username is already exist " + username);
+			
+		}
+
+	}
 
 }

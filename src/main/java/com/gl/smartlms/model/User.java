@@ -126,7 +126,7 @@ public class User implements Serializable {
 	@Column(name = "active")
 	private Integer active;
 
-	@NotNull
+	
 	@Column(name = "role")
 	private String role;
 

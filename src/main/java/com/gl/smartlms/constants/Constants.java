@@ -11,9 +11,9 @@ import org.springframework.http.ResponseEntity;
 //==============================================================
 public class Constants {
 
-	public static final String ROLE_ADMIN = "Admin";
-	public static final String ROLE_LIBRARIAN = "Librarian";
-	public static final String ROLE_USER = "User";
+	public static final String ROLE_ADMIN = "ROLE_ADMIN";
+	public static final String ROLE_LIBRARIAN = "ROLE_LIBRARIAN";
+	public static final String ROLE_USER = "ROLE_USER";
 
 	public static final String MEMBER_FACULTY = "Faculty";
 	public static final String MEMBER_STUDENT = "Student";
@@ -26,10 +26,7 @@ public class Constants {
 	public static final Integer BOOK_NOT_RETURNED = 0;
 	public static final Integer BOOK_RETURNED = 1;
 
-	public static final String SOMETHING_WENT_WRONG = "Something Went Wrong";
-	public static final String INVALID_DATA = "Invalid data";
-	public static final String INCOMPLETE_DETAILS = "Fields Are Missing";
-	public static final String NO_CONTENT = "No Content Found List is Empty";
+	
 
 	public static ResponseEntity<String> getResponseEntity(String responseMessage, HttpStatus httpstatus) {
 

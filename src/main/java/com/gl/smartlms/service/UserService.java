@@ -52,6 +52,18 @@ public interface UserService {
 
 	public void deleteMember(Long id);
 
+
+
+
+
+	public List<User> getAllUser();
+
+
+
+
+
+	public void findByUsername(String username);
+
 	
 
 

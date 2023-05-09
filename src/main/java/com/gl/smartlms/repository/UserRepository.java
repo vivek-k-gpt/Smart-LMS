@@ -20,5 +20,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 	List<User> findByActive(int active);
 
+	User findByUsername(String username);
+
 	
 }

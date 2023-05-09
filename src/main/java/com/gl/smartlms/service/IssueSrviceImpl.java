@@ -46,14 +46,7 @@ public class IssueSrviceImpl implements IssueService {
 		return issueRepository.findById(id);
 	}
 
-	@Override
-	public Issue getIssueDetail(Long id)  {
-	
-		Issue issue =  issueRepository.findById(id).get();
-	
-	
-		return issue;
-	}
+
 
 	@Override
 	public int compareDates(Date expected_date, Date return_date) {

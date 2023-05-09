@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -76,11 +77,9 @@ public class BookRestController {
 	@GetMapping(value = "/total/count", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> countAllBooks() {
 		Long bookCount = bookService.getTotalCount();
-		if (bookCount != 0) {
 			return new ResponseEntity<String>(bookCount.toString(), HttpStatus.OK);
 		}
-		return Constants.getResponseEntity(Constants.NO_CONTENT, HttpStatus.NO_CONTENT);
-	}
+
 
 	// ==============================================================
 	// Count Available Book Api (Admin)
@@ -88,11 +87,8 @@ public class BookRestController {
 	@GetMapping(value = "/available/count", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> countAllAvaialbleBooks() {
 		Long bookCount = bookService.getAvailableBookCount();
-		if (bookCount != 0) {
 			return new ResponseEntity<String>(bookCount.toString(), HttpStatus.OK);
 		}
-		return Constants.getResponseEntity(Constants.NO_CONTENT, HttpStatus.NO_CONTENT);
-	}
 
 	// ==============================================================
 	// Count Issued Book Api (Admin)
@@ -100,11 +96,9 @@ public class BookRestController {
 	@GetMapping(value = "/issued/count", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> countAllIssuedBooks() {
 		Long bookCount = bookService.getIssuedBookCount();
-		if (bookCount != 0) {
 			return new ResponseEntity<String>(bookCount.toString(), HttpStatus.OK);
 		}
-		return Constants.getResponseEntity(Constants.NO_CONTENT, HttpStatus.NO_CONTENT);
-	}
+		
 
 // ==============================================================
 	// LIST (Book Based Filtering)
@@ -113,6 +107,7 @@ public class BookRestController {
 	// ==============================================================
 	// List All Book Api (Admin + User)
 	// ==============================================================
+	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	@GetMapping("/list")
 	public ResponseEntity<List<Book>> showAllBooks() {
 		List<Book> list = bookService.getAll();

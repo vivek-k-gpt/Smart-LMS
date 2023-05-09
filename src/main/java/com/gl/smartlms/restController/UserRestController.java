@@ -61,6 +61,7 @@ public class UserRestController {
 
 	@PostMapping(value = "/register", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> registerUser(@Valid @RequestBody User user) {
+		userService.findByUsername(user.getUsername());
 		user.setActive(0);
 		user.setRole("User");
 		Optional<User> user1 = Optional.ofNullable(userService.save(user));
@@ -75,6 +76,7 @@ public class UserRestController {
 	// ==============================================================
 	@RequestMapping(value = "/admin/register", method = RequestMethod.POST)
 	public ResponseEntity<String> saveMember(@Valid @RequestBody User user) {
+		userService.findByUsername(user.getUsername());
 		user.setActive(1);
 		user.setRole(Constants.ROLE_LIBRARIAN);
 		Optional<User> user1 = Optional.ofNullable(userService.save(user));
@@ -93,12 +95,8 @@ public class UserRestController {
 	@GetMapping("/count")
 	public ResponseEntity<String> countAllUsers() {
 		Long userCount = userService.getTotalCount();
-		if (userCount != 0) {
 			return new ResponseEntity<String>(userCount.toString(), HttpStatus.OK);
-		} else {
-			return Constants.getResponseEntity(Constants.NO_CONTENT, HttpStatus.NO_CONTENT);
-		}
-	}
+		} 
 
 	// ==============================================================
 	// Faculty Member Count API (Admin)
@@ -107,11 +105,9 @@ public class UserRestController {
 	@GetMapping("/count/faculty")
 	public ResponseEntity<String> countAllFacultyMembers() {
 		Long facultyCount = userService.getFacultyCount();
-		if (facultyCount != 0) {
 			return new ResponseEntity<String>(facultyCount.toString(), HttpStatus.OK);
 		}
-		return Constants.getResponseEntity(Constants.NO_CONTENT, HttpStatus.NO_CONTENT);
-	}
+	
 
 	// ==============================================================
 	// Student Member Count API (Admin)
@@ -120,18 +116,16 @@ public class UserRestController {
 	@GetMapping("/count/student")
 	public ResponseEntity<String> countAllStudentMembers() {
 		Long studentCount = userService.getStudentsCount();
-		if (studentCount != 0) {
 			return new ResponseEntity<String>(studentCount.toString(), HttpStatus.OK);
 		}
-		return Constants.getResponseEntity(Constants.NO_CONTENT, HttpStatus.NO_CONTENT);
-	}
+
 
 	
 
 	// ==============================================================
 	// List Users Api(Sorted) (Admin)
 	// ==============================================================
-	@GetMapping("/user")
+	@GetMapping("/users")
 	public ResponseEntity<List<User>> showAllUsers() {
 		List<User> list = userService.getAll();
 		return new ResponseEntity<List<User>>(list, HttpStatus.FOUND);
@@ -140,7 +134,7 @@ public class UserRestController {
 	// ==============================================================
 	// List Student Member Api (Admin)
 	// ==============================================================
-	@GetMapping("/student")
+	@GetMapping("/students")
 	public ResponseEntity<List<User>> showAllStudents() {
 		List<User> list = userService.getAllStudent();
 		return new ResponseEntity<List<User>>(list, HttpStatus.FOUND);
@@ -224,6 +218,9 @@ public class UserRestController {
 	@PutMapping("/update")
 	public ResponseEntity<String> updateMember(@Valid @RequestBody User member) {
 		Optional<User> member1 = userService.getMember(member.getId());
+		member.setPassword(member1.get().getPassword());
+		member.setRole(member1.get().getRole());
+		member.setUsername(member1.get().getUsername());
 		userService.save(member);
 		return new ResponseEntity<String>("Member Updated With Name " + member1.get().getFirstName(),
 				HttpStatus.ACCEPTED);
