@@ -94,4 +94,13 @@ public class IssueSrviceImpl implements IssueService {
 		return issue;
 	}
 
+	@Override
+	public List<Issue> getIssueByMember(User member) {
+			List<Issue> issue  = issueRepository.findByBookAndReturned(member,Constants.BOOK_NOT_RETURNED);
+			if(issue.isEmpty()) {
+				throw  new NoSuchIssueIdFoundException("No Book is issue to member with id" + member.getId());
+			}
+		return  issue;
+	}
+
 }

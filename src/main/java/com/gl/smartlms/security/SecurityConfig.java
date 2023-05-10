@@ -58,13 +58,15 @@ public class SecurityConfig {
                 .authorizeHttpRequests().requestMatchers("user/register").permitAll().and()
                 .authorizeHttpRequests().requestMatchers("api-admin/**").hasRole("ADMIN").and()
                 .authorizeHttpRequests().requestMatchers("api-all/**").hasAnyRole("ADMIN","USER","LIBRARIAN").and()
+                .authorizeHttpRequests().requestMatchers("api-librarian/**").hasRole("LIBRARIAN").and()
+                .authorizeHttpRequests().requestMatchers("api-admin-librarian/**").hasAnyRole("LIBRARIAN","ADMIN").and().httpBasic();
                 
-                .authorizeHttpRequests().requestMatchers("/api-issue/**").hasRole("USER")
+                
+              
              
-                .and()
-                .authorizeHttpRequests().requestMatchers(HttpMethod.GET, "/api-book/list").hasRole("USER").and().httpBasic();
+         
         return http.build();
-//    	return http.csrf().disable().authorizeHttpRequests().anyRequest().authenticated().and().
+//    	
     }
     
     

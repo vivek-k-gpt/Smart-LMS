@@ -32,7 +32,6 @@ import com.gl.smartlms.service.UserService;
 import com.gl.smartlms.model.Issue;
 
 @RestController
-@RequestMapping("/api-issue")
 public class IssueRestController {
 
 	@Autowired
@@ -45,7 +44,7 @@ public class IssueRestController {
 // ==============================================================
 	// Issue Book Api (Admin)
 // ==============================================================
-	@PostMapping("/save")
+	@PostMapping("api-librarian/issue/book")
 	public ResponseEntity<String> issueBook(@RequestBody Issue issue) {
 
 		Book book = bookService.getBookById(issue.getBook().getId()).get();
@@ -58,7 +57,7 @@ public class IssueRestController {
 			bookService.saveBook(book);
 
 			Issue issueDetail = issueService.IssueBookToMember(issue);
-			List<Issue> issue1 = new ArrayList<Issue>();
+			List<Issue> issue1 = member.getIssue();
 			issue1.add(issueDetail);
 
 			member.setIssue(issue1);
@@ -72,10 +71,10 @@ public class IssueRestController {
 	// Issue Books Api(Issue Mulliple books to User) (Admin)
 	// ==============================================================
 
-	@PostMapping("/save/{ids}")
+	@PostMapping("api-librarian/issue/books/{ids}")
 	public ResponseEntity<String> issueBooks(@PathVariable("ids") List<Long> ids, @RequestBody Issue issue) {
 		User member = userService.getMember(issue.getUser().getId()).get();
-		List<Issue> issuedList = new ArrayList<>();
+		List<Issue> issuedList = member.getIssue();
 		for (Long i : ids) {
 			Book book = bookService.getBookById(i).get();
 			if (book.getStatus() == Constants.BOOK_STATUS_AVAILABLE) {
@@ -94,7 +93,7 @@ public class IssueRestController {
 // ==============================================================
 	// Return Book Api (Admin)
 // ==============================================================
-	@PutMapping("/return")
+	@PutMapping("api-librarian/return/book")
 	public ResponseEntity<String> returnBook(@RequestParam("issue_id") Long id) {
 
 		Issue issue = issueService.getIssueDetailsById(id).get();
@@ -115,7 +114,7 @@ public class IssueRestController {
 	// ==============================================================
 	// Return Book Api (Multiple books return) (Admin)
 	// ==============================================================
-	@PutMapping("/return/books/{user_id}/{book_ids}")
+	@PutMapping("api-librarian/return/books/{user_id}/{book_ids}")
 	public ResponseEntity<String> returnBooks(@PathVariable("user_id") Long id, @PathVariable List<Long> book_ids) {
 
 		User user = userService.getMember(id).get();
@@ -134,11 +133,41 @@ public class IssueRestController {
 	// ==============================================================
 	// Issue Records Api (Admin)
 	// ==============================================================
-	@GetMapping("/record")
+	@GetMapping("api-librarian/issue/record")
 	public ResponseEntity<List<Issue>> getRecord() {
 		List<Issue> recordList = issueService.getRecordList();
 		return new ResponseEntity<List<Issue>>(recordList, HttpStatus.OK);
 	}
+	
+	
+	
+	
+
+	// ==============================================================
+	// Get Books Isuued to A Member
+	// ==============================================================
+	
+	@GetMapping("/api-librarian/{member_id}/book/issue-list")
+	public ResponseEntity<List<Issue>> getIssuedBookOfMember(@PathVariable ("member_id") Long Id) {
+		
+		User member = userService.getMember(Id).get();
+		List<Issue> issue = issueService.getIssueByMember(member);
+		
+		return new ResponseEntity<List<Issue>>(issue, HttpStatus.OK);
+		
+		
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 	// ==============================================================
 	// Check Fine Status Api (Admin)

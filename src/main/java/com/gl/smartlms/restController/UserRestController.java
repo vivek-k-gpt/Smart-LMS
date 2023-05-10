@@ -42,13 +42,13 @@ public class UserRestController {
 //			return new ResponseEntity<String>("User Not Active.......Contact Administration", HttpStatus.OK);
 //		}
 //	}
-
+	
+	
+	
+	//permitall
 	// ==============================================================
 	// User Register API (User)
 	// ==============================================================
-
-	
-	//permitall
 	@PostMapping(value = "user/register", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> registerUser(@Valid @RequestBody User user) {
 		userService.findByUsername(user.getUsername());
@@ -60,6 +60,7 @@ public class UserRestController {
 		}
 		return new ResponseEntity<String>("User Registered Sucessfully", HttpStatus.CREATED);
 	}
+	
 
 	//admin
 	// ==============================================================
@@ -94,8 +95,7 @@ public class UserRestController {
 	// ==============================================================
 	// Faculty Member Count API (Admin)
 	// ==============================================================
-
-	@GetMapping("api-admin/user/faculty/count")
+	@GetMapping("api-admin-librarian/user/faculty/count")
 	public ResponseEntity<String> countAllFacultyMembers() {
 		Long facultyCount = userService.getFacultyCount();
 			return new ResponseEntity<String>(facultyCount.toString(), HttpStatus.OK);
@@ -105,8 +105,7 @@ public class UserRestController {
 	// ==============================================================
 	// Student Member Count API (Admin)
 	// ==============================================================
-
-	@GetMapping("api-admin/user/student/count")
+	@GetMapping("api-admin-librarian/user/student/count")
 	public ResponseEntity<String> countAllStudentMembers() {
 		Long studentCount = userService.getStudentsCount();
 			return new ResponseEntity<String>(studentCount.toString(), HttpStatus.OK);
@@ -123,26 +122,28 @@ public class UserRestController {
 		List<User> list = userService.getAll();
 		return new ResponseEntity<List<User>>(list, HttpStatus.FOUND);
 	}
+	
 	//admin
 	// ==============================================================
 	// List Student Member Api (Admin)
 	// ==============================================================
-	@GetMapping("api-admin/students")
+	@GetMapping("api-admin-librarian/students")
 	public ResponseEntity<List<User>> showAllStudents() {
 		List<User> list = userService.getAllStudent();
 		return new ResponseEntity<List<User>>(list, HttpStatus.FOUND);
 	}
 
-	
+	//admin
 	// ==============================================================
 	// List Faculty Member Api (Admin)
 	// ==============================================================
-	@GetMapping("api-admin/faculty")
+	@GetMapping("api-admin-librarian/faculty")
 	public ResponseEntity<List<User>> showAllFaculties() {
 		List<User> list = userService.getAllFaculty();
 		return new ResponseEntity<List<User>>(list, HttpStatus.FOUND);
 	}
 
+	//admin
 	// ==============================================================
 	// List Active Member Api (Admin)
 	// ==============================================================
@@ -152,6 +153,7 @@ public class UserRestController {
 		return new ResponseEntity<List<User>>(list, HttpStatus.FOUND);
 	}
 
+	//admin
 	// ==============================================================
 	// List Active Member Api (Admin)
 	// ==============================================================
@@ -180,7 +182,6 @@ public class UserRestController {
 	// ==============================================================
 	// UnBlocking Member Api 
 	// ==============================================================
-
 	@PutMapping("api-admin/unblock/{id}")
 	public ResponseEntity<String> unlockUser(@PathVariable Long id) {
 		User user = userService.getMember(id).get();
@@ -197,7 +198,7 @@ public class UserRestController {
 	// Find Member API(change) (Admin)
 	// ==============================================================
 
-	@GetMapping(value = "/find/{id}")
+	@GetMapping(value = "api-admin-librarian/find/{id}")
 	public ResponseEntity<User> findUserById(@PathVariable Long id) {
 		User user = userService.getMember(id).get();
 		return new ResponseEntity<User>(user, HttpStatus.FOUND);
@@ -208,7 +209,6 @@ public class UserRestController {
 	// ==============================================================
 	// Update Member API (Admin)
 	// ============================================================
-
 	@PutMapping("api-all/update")
 	public ResponseEntity<String> updateMember(@Valid @RequestBody User member) {
 		Optional<User> member1 = userService.getMember(member.getId());

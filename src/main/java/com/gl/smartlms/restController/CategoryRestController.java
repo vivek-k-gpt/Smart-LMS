@@ -32,27 +32,28 @@ import java.util.List;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/api-category")
+
 public class CategoryRestController {
 
 	@Autowired
 	private CategoryService categoryService;
 
 	
-
+	//librarian
 	// ==============================================================
 	// Add Category Api (Admin)
 	// ==============================================================
-	@RequestMapping(value = "/add", method = RequestMethod.POST)
+	@RequestMapping(value = "api-librarian/category/add", method = RequestMethod.POST)
 	public ResponseEntity<String> saveCategory(@Valid @RequestBody Category category) {
 		 category = categoryService.addNew(category);
 		return new ResponseEntity<String>("Category Added with type  " + category.getName(),HttpStatus.CREATED);
 	}
 
+	//librarian
 	// ==============================================================
 	// Update/Edit Category Details Api (Admin)
 	// ==============================================================
-	@PutMapping("/update")
+	@PutMapping("api-librarian/category/update")
 	public ResponseEntity<String> updateCategory(@Valid @RequestBody Category category) {
 		Category cat = categoryService.getCategory(category.getId()).get();
 		category.setCreateDate(cat.getCreateDate());
@@ -60,49 +61,49 @@ public class CategoryRestController {
 		return new ResponseEntity<String>("Category Updated With Type  " + cat.getName(), HttpStatus.ACCEPTED);
 	}
 
-	
+	//all
 	// ==============================================================
 	// List Category Api (Admin + user)
 	// ==============================================================
-	@GetMapping("/list")
+	@GetMapping("api-admin-librarian/category/list")
 	public ResponseEntity<List<Category>> showAllMembers() {
 		List<Category> clist = categoryService.getAll();
 		return new ResponseEntity<List<Category>>(clist, HttpStatus.FOUND);
 	}
-
+	//all
 	// ==============================================================
 	// List(Sorted) Category Api (Admin + User)
 	// ==============================================================
-	@GetMapping("/sorted/list")
+	@GetMapping("api-admin-librarian/category/sorted-list")
 	public ResponseEntity<List<Category>> showAllCategorySortedByName() {
 		List<Category> clist = categoryService.getAllBySort();
 		return new ResponseEntity<List<Category>>(clist, HttpStatus.FOUND);
 	}
-
+	//all
 	// ==============================================================
 	// Count total Category Api (Admin)
 	// ==============================================================
-	@GetMapping("/total/count")
+	@GetMapping("api-admin-librarian/category/count")
 	public ResponseEntity<String> countAllCategory() {
 		Long categoryCount = categoryService.getTotalCount();
 	
 			return new ResponseEntity<String>(categoryCount.toString(), HttpStatus.OK);
 		}
 	
-
+	//all
 	// ==============================================================
 	// Find Category By Id Api (Admin)
 	// ==============================================================
-	@GetMapping(value = "/find/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "api-all/category/find/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Category> findCategoryById(@PathVariable Long id) {
 		Category category = categoryService.getCategory(id).get();
 		return new ResponseEntity<Category>(category, HttpStatus.FOUND);
 	} 
-
+	//librarian
 	// ==============================================================
 	// Delete Category By Id Api (Admin)
 	// ==============================================================
-	@DeleteMapping("/delete/{id}")
+	@DeleteMapping("api-librarian/category/delete/{id}")
 	public ResponseEntity<String> deleteCategoryById(@PathVariable Long id) {
 		Category category = categoryService.getCategory(id).get();
 		if (categoryService.hasUsage(category)) {
@@ -112,20 +113,7 @@ public class CategoryRestController {
 			return new ResponseEntity<String>("Category deleted Suceesfully", HttpStatus.ACCEPTED);
 		}
 	}
+	
 
-	// ==============================================================
-	// Delete Category (Admin)
-	// ==============================================================
-	@DeleteMapping("/delete")
-	public ResponseEntity<String> deleteCategory(@RequestBody Category category) {
-		Category cat = categoryService.getCategory(category.getId()).get();
-		if (categoryService.hasUsage(cat)) {
-			return new ResponseEntity<String>(
-					"category is in Use...can not be deleted (Books Are Added in this category", HttpStatus.OK);
-		} else {
-			categoryService.deleteCategoryByCategoryObject(cat);
-			return new ResponseEntity<String>("Category deleted Suceesfully", HttpStatus.ACCEPTED);
-		}
-	}
 
 }

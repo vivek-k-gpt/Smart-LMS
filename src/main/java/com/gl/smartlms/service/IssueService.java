@@ -32,4 +32,6 @@ public interface IssueService {
 
 	public List<Issue> getRecordList();
 
+	public List<Issue> getIssueByMember(User member);
+
 }
