@@ -112,26 +112,26 @@ public Long getStudentsCount() {
 	}
 
 
-	@Override
-	public List<User> getAllActive() {
-	
-		List<User>  activeList= userRepository.findByActive(1);
-		if(activeList.isEmpty()) {
-		throw new NoContentFoundException("No Active User !  List is Empty");
-		}
-		return activeList;
-	}
+//	@Override
+//	public List<User> getAllActive() {
+//	
+//		List<User>  activeList= userRepository.findByActive(1);
+//		if(activeList.isEmpty()) {
+//		throw new NoContentFoundException("No Active User !  List is Empty");
+//		}
+//		return activeList;
+//	}
 
-
-	@Override
-	public List<User> getAllInActive() {
-		
-		List<User> inactiveList = userRepository.findByActive(0);
-		if(inactiveList.isEmpty()) {
-			throw new NoContentFoundException("No InActive User !  List is Empty");
-			}
-			return inactiveList;
-	}
+//
+//	@Override
+//	public List<User> getAllInActive() {
+//		
+//		List<User> inactiveList = userRepository.findByActive(0);
+//		if(inactiveList.isEmpty()) {
+//			throw new NoContentFoundException("No InActive User !  List is Empty");
+//			}
+//			return inactiveList;
+//	}
 
 
 	@Override
@@ -176,7 +176,7 @@ public Long getStudentsCount() {
 		member.setRole(user.getRole());
 		member.setUsername(user.getUsername());
 		member.setType(user.getType());
-		member.setActive(user.getActive());
+		
 		member.setJoiningDate(user.getJoiningDate());
 		userRepository.save(member);
 		

@@ -47,7 +47,7 @@ public class User implements Serializable {
 
 	public User(@NotNull String username, @NotNull String password, @NotNull String gender, @NotNull String firstName,String middleName,
 	 @NotNull String lastName, @NotNull String dateOfBirth, @NotNull String email,
-			@NotNull String contact, @NotNull String type, @NotNull String role, @NotNull Integer active) {
+			@NotNull String contact, @NotNull String type, @NotNull String role ) {
 		super();
 		this.username = username;
 		this.password = password;
@@ -59,7 +59,7 @@ public class User implements Serializable {
 		this.contact = contact;
 		this.type = type;
 		this.role = role;
-		this.active = active;
+	
 		this.gender = gender;
 
 	}
@@ -121,9 +121,6 @@ public class User implements Serializable {
 	@Column(name = "type")
 	private String type;
 
-	
-	@Column(name = "active")
-	private Integer active;
 
 	
 	@Column(name = "role")

@@ -1,29 +1,17 @@
 package com.gl.smartlms.restController;
-
 import org.springframework.http.HttpStatus;
-
-
 import java.util.List;
-
 import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-
 import org.springframework.web.bind.annotation.RestController;
-
-
-
 import com.gl.smartlms.advice.BookNotFoundException;
 import com.gl.smartlms.advice.BookTagAlreadyExistException;
 import com.gl.smartlms.constants.Constants;
@@ -50,7 +38,7 @@ public class BookRestController {
 // ==============================================================//
 
 	// ==============================================================
-	// Add Category Api (Admin)
+	// Add Category Api 
 	// ==============================================================
 	@PostMapping("api-librarian/book/add/{id}")
 	public ResponseEntity<String> addBook(@RequestBody Book book, @PathVariable("id") Long id) {
@@ -72,9 +60,9 @@ public class BookRestController {
 // ==============================================================
 
 	// ==============================================================
-	// Count Total Book Api (Admin)
+	// Count Total Book Api 
 	// ==============================================================
-	@GetMapping(value = "api-admin-librarian/book/total/count", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "api-admin-librarian/book/count", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> countAllBooks() {
 		Long bookCount = bookService.getTotalCount();
 			return new ResponseEntity<String>(bookCount.toString(), HttpStatus.OK);
@@ -82,7 +70,7 @@ public class BookRestController {
 
 
 	// ==============================================================
-	// Count Available Book Api (Admin)
+	// Count Available Book Api 
 	// ==============================================================
 	@GetMapping(value = "api-admin-librarian/book/available/count", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> countAllAvaialbleBooks() {
@@ -123,17 +111,7 @@ public class BookRestController {
 		return new ResponseEntity<List<Book>>(list, HttpStatus.FOUND);
 	}
 
-	// ==============================================================
-	// List All Book(By Tagname) Api (Admin + User)
-	// ==============================================================
-	@GetMapping("api-all/book/find/{tag}")
-	public ResponseEntity<Book> findBookBytag(@PathVariable String tag) {
-		Book book = bookService.getByTag(tag);
-		if (book != null) {
-			return new ResponseEntity<Book>(book, HttpStatus.OK);
-		}
-		throw new BookNotFoundException("No book is found with tag " + tag);
-	}
+
 
 	// ==============================================================
 	// List All Book(By Authors) Api (Admin + User)
@@ -249,14 +227,15 @@ public class BookRestController {
 //	Update Book Details (SAMECategory) (Admin)
 //==============================================================	
 	@PutMapping("api-librarian/book/update")
-	public ResponseEntity<String> updateBook(@Valid @RequestBody Book book) {
+	public ResponseEntity<String> updateBook( @RequestBody Book book) {
 		Book book1 = bookService.getBookById(book.getId()).get();
 
-		Optional<Category> category = categoryService.getCategory(book.getCategory().getId());
+		Optional<Category> category = categoryService.getCategory(book1.getCategory().getId());
 
 		book.setCategory(category.get());
 		book.setCreateDate(book1.getCreateDate());
 		book.setStatus(book1.getStatus());
+		book.setTag(book1.getTag());
 		bookService.saveBook(book);
 		return new ResponseEntity<String>("Succesfully Updated Book Details", HttpStatus.ACCEPTED);
 	}

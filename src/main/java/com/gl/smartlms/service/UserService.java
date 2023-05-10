@@ -44,9 +44,9 @@ public interface UserService {
 
 	public List<User> getAllFaculty();
 
-	public List<User> getAllActive();
+	//public List<User> getAllActive();
 
-	public List<User> getAllInActive();
+	//public List<User> getAllInActive();
 
 	public boolean hasUsage(User member);
 

@@ -16,7 +16,7 @@ public interface IssueRepository extends JpaRepository<Issue, Long> {
 
 	Issue findByBookAndReturned(Book book, Integer bookNotReturned);
 
-	List<Issue> findByBookAndReturned(User member, Integer bookNotReturned);
+	List<Issue> findByUserAndReturned(User member, Integer bookNotReturned);
 
 
 

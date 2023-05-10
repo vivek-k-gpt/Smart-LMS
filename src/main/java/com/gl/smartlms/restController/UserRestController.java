@@ -25,34 +25,13 @@ public class UserRestController {
 	@Autowired
 	private UserService userService;
 	
-
-	// ==============================================================
-	// User Login API (User+Admin)
-	// ==============================================================
-
-//	@PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
-//	public ResponseEntity<String> getUserValidate(@RequestParam String username, @RequestParam String password) {
-//		Optional<User> user = Optional.ofNullable(userService.getUserValidate(username, password));
-//		if (user.isEmpty()) {
-//			throw new AuthenticationFailedException("Authentication Failed ...... Invalid Credentials");
-//		}
-//		if (user.get().getActive() == 1) {
-//			return new ResponseEntity<String>("User Logged in Succesfully", HttpStatus.OK);
-//		} else {
-//			return new ResponseEntity<String>("User Not Active.......Contact Administration", HttpStatus.OK);
-//		}
-//	}
 	
-	
-	
-	//permitall
 	// ==============================================================
-	// User Register API (User)
+	// User Register API (ALL)
 	// ==============================================================
 	@PostMapping(value = "user/register", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> registerUser(@Valid @RequestBody User user) {
 		userService.findByUsername(user.getUsername());
-		user.setActive(0);
 		user.setRole(Constants.ROLE_USER);
 		Optional<User> user1 = Optional.ofNullable(userService.save(user));
 		if (user1.isEmpty()) {
@@ -62,21 +41,21 @@ public class UserRestController {
 	}
 	
 
-	//admin
+	
 	// ==============================================================
-	// Add Librarian API API 
+	// Add Librarian API API (Admin)
 	// ==============================================================
 	@RequestMapping(value = "api-admin/librarian/register", method = RequestMethod.POST)
 	public ResponseEntity<String> saveMember(@Valid @RequestBody User user) {
 		userService.findByUsername(user.getUsername());
-		user.setActive(1);
+	
 		user.setType(Constants.MEMBER_OTHER);
 		user.setRole(Constants.ROLE_LIBRARIAN);
 		Optional<User> user1 = Optional.ofNullable(userService.save(user));
 		if (user1.isEmpty()) {
 			throw new RegistrationFailedException("Registration Failed ......");
 		}
-		return new ResponseEntity<String>("User Registered Successfully", HttpStatus.CREATED);
+		return new ResponseEntity<String>("Librarian Registered Successfully", HttpStatus.CREATED);
 	}
 
 
@@ -143,55 +122,6 @@ public class UserRestController {
 		return new ResponseEntity<List<User>>(list, HttpStatus.FOUND);
 	}
 
-	//admin
-	// ==============================================================
-	// List Active Member Api (Admin)
-	// ==============================================================
-	@GetMapping("api-admin/active")
-	public ResponseEntity<List<User>> showAllActive() {
-		List<User> list = userService.getAllActive();
-		return new ResponseEntity<List<User>>(list, HttpStatus.FOUND);
-	}
-
-	//admin
-	// ==============================================================
-	// List Active Member Api (Admin)
-	// ==============================================================
-	@GetMapping("api-admin/inactive")
-	public ResponseEntity<List<User>> showAllInActive() {
-		List<User> list = userService.getAllInActive();
-		return new ResponseEntity<List<User>>(list, HttpStatus.FOUND);
-	}
-
-
-	//admin
-	// ==============================================================
-	// Blocking Member Api (Admin)
-	// ==============================================================
-	@PutMapping("api-admin/block/{id}")
-	public ResponseEntity<String> blockUser(@PathVariable Long id) {
-		User user = userService.getMember(id).get();
-		if (user.getActive() == 1) {
-			user.setActive(0);
-			userService.save(user);
-			return new ResponseEntity<String>("User Blocked Successfully", HttpStatus.ACCEPTED);
-		}
-		return new ResponseEntity<String>("User is already Blocked", HttpStatus.OK);
-	}
-	//admin
-	// ==============================================================
-	// UnBlocking Member Api 
-	// ==============================================================
-	@PutMapping("api-admin/unblock/{id}")
-	public ResponseEntity<String> unlockUser(@PathVariable Long id) {
-		User user = userService.getMember(id).get();
-		if (user.getActive() == 0) {
-			user.setActive(1);
-			userService.save(user);
-			return new ResponseEntity<String>("User UnBlocked", HttpStatus.ACCEPTED);
-		}
-		return new ResponseEntity<String>("User is Not Blocked", HttpStatus.ACCEPTED);
-	}
 
 	//admin+librarian
 	// ==============================================================
