@@ -1,17 +1,11 @@
 package com.gl.smartlms.model;
-
 import java.io.Serializable;
-
 import jakarta.validation.constraints.NotNull;
-
 import jakarta.validation.constraints.NotEmpty;
-
 import java.util.Date;
 import java.util.List;
-
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;

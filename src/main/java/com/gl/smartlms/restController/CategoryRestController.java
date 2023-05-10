@@ -54,7 +54,7 @@ public class CategoryRestController {
 	// ==============================================================
 	// List Category Api
 	// ==============================================================
-	@GetMapping("api-admin-librarian/category/list")
+	@GetMapping("api-all/category/list")
 	public ResponseEntity<List<Category>> showAllMembers() {
 		List<Category> clist = categoryService.getAll();
 		return new ResponseEntity<List<Category>>(clist, HttpStatus.FOUND);
@@ -63,7 +63,7 @@ public class CategoryRestController {
 	// ==============================================================
 	// List(Sorted) Category Api
 	// ==============================================================
-	@GetMapping("api-admin-librarian/category/sorted-list")
+	@GetMapping("api-all/category/sorted-list")
 	public ResponseEntity<List<Category>> showAllCategorySortedByName() {
 		List<Category> clist = categoryService.getAllBySort();
 		return new ResponseEntity<List<Category>>(clist, HttpStatus.FOUND);

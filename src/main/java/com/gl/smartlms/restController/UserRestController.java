@@ -27,7 +27,7 @@ public class UserRestController {
 	
 	
 	// ==============================================================
-	// User Register API (ALL)
+	// User Register API (ALL) role - user
 	// ==============================================================
 	@PostMapping(value = "user/register", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> registerUser(@Valid @RequestBody User user) {
