@@ -1,9 +1,11 @@
 package com.gl.smartlms.security;
 
+import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.Bean;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -40,19 +42,29 @@ public class SecurityConfig {
 	}
 	
 	
-	
+//	 .antMatchers("/**").hasAnyAuthority(Constants.ROLE_ADMIN, Constants.ROLE_LIBRARIAN).anyRequest()
+////.authenticated()   .antMatchers("/admin/**").hasRole("ADMIN")
+//.antMatchers("/user/**").hasRole("USER")
+//.antMatchers("/**").permitAll()
 	
 
 	
     
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http.csrf().disable()
-                .authorizeHttpRequests()
-                .requestMatchers("/api-user/register").permitAll()
+    	
+    	
+       http.csrf().disable()
+                .authorizeHttpRequests().requestMatchers("user/register").permitAll().and()
+                .authorizeHttpRequests().requestMatchers("api-admin/**").hasRole("ADMIN").and()
+                .authorizeHttpRequests().requestMatchers("api-all/**").hasAnyRole("ADMIN","USER","LIBRARIAN").and()
+                
+                .authorizeHttpRequests().requestMatchers("/api-issue/**").hasRole("USER")
+             
                 .and()
-                .authorizeHttpRequests().requestMatchers("/api-book/list")
-                .authenticated().and().formLogin().and().build();
+                .authorizeHttpRequests().requestMatchers(HttpMethod.GET, "/api-book/list").hasRole("USER").and().httpBasic();
+        return http.build();
+//    	return http.csrf().disable().authorizeHttpRequests().anyRequest().authenticated().and().
     }
     
     

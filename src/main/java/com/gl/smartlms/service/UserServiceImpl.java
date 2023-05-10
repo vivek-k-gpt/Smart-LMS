@@ -3,7 +3,7 @@ package com.gl.smartlms.service;
 import java.util.List;
 import java.util.Optional;
 
-
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -76,7 +76,7 @@ public Long getStudentsCount() {
 	@Override
 	public User getUserValidate(String username, String password) {
 		
-		return userRepository.findByUsernameAndPassword(username,password);
+		return userRepository.findByUsernameAndPassword(username,beBCryptPasswordEncoder.encode(password));
 	}
 
 
@@ -166,6 +166,20 @@ public Long getStudentsCount() {
 			
 		}
 
+	}
+
+
+
+	@Override
+	public void update(User member, User user) {
+		member.setPassword(user.getPassword());
+		member.setRole(user.getRole());
+		member.setUsername(user.getUsername());
+		member.setType(user.getType());
+		member.setActive(user.getActive());
+		member.setJoiningDate(user.getJoiningDate());
+		userRepository.save(member);
+		
 	}
 
 }

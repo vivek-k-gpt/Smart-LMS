@@ -117,8 +117,7 @@ public class User implements Serializable {
 	@Column(name = "email")
 	private String email;
 
-	@NotEmpty(message = "*Please select member type")
-	@NotNull(message = "please Select Member Type")
+	
 	@Column(name = "type")
 	private String type;
 

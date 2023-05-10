@@ -6,7 +6,7 @@ import java.util.List;
 
 import java.util.Optional;
 
-
+import javax.validation.Valid;
 
 import org.springframework.stereotype.Service;
 
@@ -63,6 +63,12 @@ public interface UserService {
 
 
 	public void findByUsername(String username);
+
+
+
+
+
+	public void update(@Valid User member, User user);
 
 	
 
