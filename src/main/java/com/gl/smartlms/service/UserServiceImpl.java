@@ -19,73 +19,59 @@ import com.gl.smartlms.repository.UserRepository;
 @Service
 public class UserServiceImpl implements UserService {
 
-@Autowired
-private UserRepository userRepository;
+	@Autowired
+	private UserRepository userRepository;
 
+	@Autowired(required = true)
+	private BCryptPasswordEncoder beBCryptPasswordEncoder;
 
-@Autowired(required=true)
-private BCryptPasswordEncoder beBCryptPasswordEncoder;
+	public Long getTotalCount() {
+		return userRepository.count();
+	}
 
-public Long getTotalCount() {
-	return userRepository.count();
-}
+	public Long getFacultyCount() {
+		return userRepository.countByType(Constants.MEMBER_FACULTY);
+	}
 
+	public Long getStudentsCount() {
+		return userRepository.countByType(Constants.MEMBER_STUDENT);
+	}
 
-
-public Long getFacultyCount() {
-	return userRepository.countByType(Constants.MEMBER_FACULTY);
-}
-
-
-public Long getStudentsCount() {
-	return userRepository.countByType(Constants.MEMBER_STUDENT);
-}
-
-
-@Override
+	@Override
 	public List<User> getAll() {
-		
-		
+
 		List<User> users = userRepository.findAllByOrderByFirstNameAscMiddleNameAsc();
-		if(users.isEmpty()) {
+		if (users.isEmpty()) {
 			throw new NoContentFoundException("No User Is Present  List is Empty");
 		}
 		return users;
 
-}
-
-
-
-	
-	
-
-	
-	@Override
-	public Optional<User> getMember(Long id) {
-		
-		Optional<User> user =  userRepository.findById(id);
-		if(user.isEmpty()) {
-			throw new UserNotFoundException("No User is found with id :" + id);
-			
-		}
-		return user;
-		
 	}
 
+	@Override
+	public Optional<User> getMember(Long id) {
+
+		Optional<User> user = userRepository.findById(id);
+		if (user.isEmpty()) {
+			throw new UserNotFoundException("No User is found with id :" + id);
+
+		}
+		return user;
+
+	}
 
 	@Override
 	public User getUserValidate(String username, String password) {
-		
-		return userRepository.findByUsernameAndPassword(username,beBCryptPasswordEncoder.encode(password));
-	}
 
+		return userRepository.findByUsernameAndPassword(username, beBCryptPasswordEncoder.encode(password));
+	}
 
 	@Override
 	public User save(User user) {
-		user.setPassword(beBCryptPasswordEncoder.encode(user.getPassword()) );
+
+		user.setPassword(beBCryptPasswordEncoder.encode(user.getPassword()));
 		return userRepository.save(user);
 	}
-
 
 	@Override
 	public List<User> getAllStudent() {
@@ -99,7 +85,6 @@ public Long getStudentsCount() {
 
 	}
 
-
 	@Override
 	public List<User> getAllFaculty() {
 
@@ -111,64 +96,34 @@ public Long getStudentsCount() {
 		return facultylist;
 	}
 
-
-//	@Override
-//	public List<User> getAllActive() {
-//	
-//		List<User>  activeList= userRepository.findByActive(1);
-//		if(activeList.isEmpty()) {
-//		throw new NoContentFoundException("No Active User !  List is Empty");
-//		}
-//		return activeList;
-//	}
-
-//
-//	@Override
-//	public List<User> getAllInActive() {
-//		
-//		List<User> inactiveList = userRepository.findByActive(0);
-//		if(inactiveList.isEmpty()) {
-//			throw new NoContentFoundException("No InActive User !  List is Empty");
-//			}
-//			return inactiveList;
-//	}
-
-
 	@Override
 	public boolean hasUsage(User member) {
-	
+
 		return member.getIssue().size() == 0;
 	}
 
-
 	@Override
 	public void deleteMember(Long id) {
-	
+
 		userRepository.deleteById(id);
 	}
 
-
-
 	@Override
 	public List<User> getAllUser() {
-		
+
 		return userRepository.findAll();
 	}
 
-
-
 	@Override
 	public void findByUsername(String username) {
-		
+
 		Optional<User> user = Optional.ofNullable(userRepository.findByUsername(username));
-		if(user.isPresent()) {
+		if (user.isPresent()) {
 			throw new UserNameNotFoundException("Username is already exist " + username);
-			
+
 		}
 
 	}
-
-
 
 	@Override
 	public void update(User member, User user) {
@@ -176,10 +131,25 @@ public Long getStudentsCount() {
 		member.setRole(user.getRole());
 		member.setUsername(user.getUsername());
 		member.setType(user.getType());
-		
+
 		member.setJoiningDate(user.getJoiningDate());
 		userRepository.save(member);
-		
+
+	}
+
+	@Override
+	public User saveLibrarian(User user) {
+		user.setType(Constants.MEMBER_OTHER);
+		user.setRole(Constants.ROLE_LIBRARIAN);
+		user.setPassword(beBCryptPasswordEncoder.encode(user.getPassword()));
+		return userRepository.save(user);
+	}
+
+	@Override
+	public User saveUser(@Valid User user) {
+		user.setRole(Constants.ROLE_USER);
+		user.setPassword(beBCryptPasswordEncoder.encode(user.getPassword()));
+		return userRepository.save(user);
 	}
 
 }

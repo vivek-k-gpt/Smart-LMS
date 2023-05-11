@@ -1,6 +1,6 @@
 package com.gl.smartlms.advice;
 
-public class CategoryNotFoundException extends RuntimeException{
+public class CategoryNotFoundException extends RuntimeException {
 
 	/**
 	 * 
@@ -12,5 +12,4 @@ public class CategoryNotFoundException extends RuntimeException{
 		// TODO Auto-generated constructor stub
 	}
 
-	
 }

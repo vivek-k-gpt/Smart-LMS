@@ -31,6 +31,11 @@ public class CategoryRestController {
 	@Autowired
 	private CategoryService categoryService;
 
+	
+	
+	
+	
+	
 	// ==============================================================
 	// Add Category Api
 	// ==============================================================
@@ -40,6 +45,10 @@ public class CategoryRestController {
 		return new ResponseEntity<String>("Category Added with type  " + category.getName(), HttpStatus.CREATED);
 	}
 
+	
+	
+	
+	
 	// ==============================================================
 	// Update/Edit Category Details Api
 	// ==============================================================
@@ -51,6 +60,9 @@ public class CategoryRestController {
 		return new ResponseEntity<String>("Category Updated With Type  " + cat.getName(), HttpStatus.ACCEPTED);
 	}
 
+	
+	
+	
 	// ==============================================================
 	// List Category Api
 	// ==============================================================
@@ -60,6 +72,10 @@ public class CategoryRestController {
 		return new ResponseEntity<List<Category>>(clist, HttpStatus.FOUND);
 	}
 
+	
+	
+	
+	
 	// ==============================================================
 	// List(Sorted) Category Api
 	// ==============================================================
@@ -69,8 +85,12 @@ public class CategoryRestController {
 		return new ResponseEntity<List<Category>>(clist, HttpStatus.FOUND);
 	}
 
+	
+	
+	
 	// ==============================================================
 	// Count total Category Api
+	
 	// ==============================================================
 	@GetMapping("api-admin-librarian/category/count")
 	public ResponseEntity<String> countAllCategory() {
@@ -79,6 +99,9 @@ public class CategoryRestController {
 		return new ResponseEntity<String>(categoryCount.toString(), HttpStatus.OK);
 	}
 
+	
+	
+	
 	// ==============================================================
 	// Find Category By Id Api
 	// ==============================================================
@@ -88,6 +111,8 @@ public class CategoryRestController {
 		return new ResponseEntity<Category>(category, HttpStatus.FOUND);
 	}
 
+	
+	
 	// ==============================================================
 	// Delete Category By Id Api
 	// ==============================================================

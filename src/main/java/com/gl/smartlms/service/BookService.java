@@ -1,6 +1,5 @@
 package com.gl.smartlms.service;
 
-
 import java.util.List;
 import java.util.Optional;
 
@@ -8,13 +7,11 @@ import org.springframework.stereotype.Service;
 
 import com.gl.smartlms.model.Book;
 import com.gl.smartlms.model.Category;
- 
 
 @Service
 public interface BookService {
-	
-	
-	public Book getByTagInCategory(String tag,Category category);
+
+	public Book getByTagInCategory(String tag, Category category);
 
 	public Book addNewBook(Book book);
 
@@ -23,8 +20,6 @@ public interface BookService {
 	public Optional<Book> getBookById(Long id);
 
 	public List<Book> getAll();
-	
-	
 
 	public Long getTotalCount();
 
@@ -57,10 +52,5 @@ public interface BookService {
 	public void delete(Book book);
 
 	public Book getByTag(String tag);
-
-
-	
-
-
 
 }

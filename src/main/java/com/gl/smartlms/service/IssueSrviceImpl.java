@@ -38,15 +38,13 @@ public class IssueSrviceImpl implements IssueService {
 
 	@Override
 	public Optional<Issue> getIssueDetailsById(Long id) {
-		
-		Optional<Issue> optional= issueRepository.findById(id);
-		if(optional.isEmpty()) {
+
+		Optional<Issue> optional = issueRepository.findById(id);
+		if (optional.isEmpty()) {
 			throw new NoSuchIssueIdFoundException("Issue Id Does not Exist .. There is no Issue Rescord with id " + id);
 		}
 		return issueRepository.findById(id);
 	}
-
-
 
 	@Override
 	public int compareDates(Date expected_date, Date return_date) {
@@ -80,7 +78,7 @@ public class IssueSrviceImpl implements IssueService {
 
 	@Override
 	public Issue getBookIssueDetails(Book book) {
-		return issueRepository.findByBookAndReturned(book,Constants.BOOK_NOT_RETURNED);
+		return issueRepository.findByBookAndReturned(book, Constants.BOOK_NOT_RETURNED);
 	}
 
 	@Override
@@ -96,11 +94,11 @@ public class IssueSrviceImpl implements IssueService {
 
 	@Override
 	public List<Issue> getIssueByMember(User member) {
-			List<Issue> issue  = issueRepository.findByUserAndReturned(member,Constants.BOOK_NOT_RETURNED);
-			if(issue.isEmpty()) {
-				throw  new NoSuchIssueIdFoundException("No Book is issue to member with id" + member.getId());
-			}
-		return  issue;
+		List<Issue> issue = issueRepository.findByUserAndReturned(member, Constants.BOOK_NOT_RETURNED);
+		if (issue.isEmpty()) {
+			throw new NoSuchIssueIdFoundException("No Book is issue to member with id" + member.getId());
+		}
+		return issue;
 	}
 
 }

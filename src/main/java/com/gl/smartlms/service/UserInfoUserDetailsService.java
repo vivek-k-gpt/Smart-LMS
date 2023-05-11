@@ -12,19 +12,16 @@ import com.gl.smartlms.model.User;
 import com.gl.smartlms.model.UserDetail;
 import com.gl.smartlms.repository.UserRepository;
 
-
 @Component
-public class UserInfoUserDetailsService  implements UserDetailsService{
-	
+public class UserInfoUserDetailsService implements UserDetailsService {
+
 	@Autowired
 	private UserRepository userRepository;
-	
-	
-	
+
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		Optional<User> user = Optional.ofNullable((userRepository.findByUsername(username)));
-		 return user.map(UserDetail::new).orElseThrow(()->new UsernameNotFoundException("user not found " + username));
+		return user.map(UserDetail::new).orElseThrow(() -> new UsernameNotFoundException("user not found " + username));
 
 	}
 

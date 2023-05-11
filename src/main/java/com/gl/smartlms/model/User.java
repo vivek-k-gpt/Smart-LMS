@@ -1,4 +1,5 @@
 package com.gl.smartlms.model;
+
 import java.io.Serializable;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.NotEmpty;
@@ -39,9 +40,9 @@ public class User implements Serializable {
 
 	}
 
-	public User(@NotNull String username, @NotNull String password, @NotNull String gender, @NotNull String firstName,String middleName,
-	 @NotNull String lastName, @NotNull String dateOfBirth, @NotNull String email,
-			@NotNull String contact, @NotNull String type, @NotNull String role ) {
+	public User(@NotNull String username, @NotNull String password, @NotNull String gender, @NotNull String firstName,
+			String middleName, @NotNull String lastName, @NotNull String dateOfBirth, @NotNull String email,
+			@NotNull String contact, @NotNull String type, @NotNull String role) {
 		super();
 		this.username = username;
 		this.password = password;
@@ -53,7 +54,7 @@ public class User implements Serializable {
 		this.contact = contact;
 		this.type = type;
 		this.role = role;
-	
+
 		this.gender = gender;
 
 	}
@@ -111,12 +112,9 @@ public class User implements Serializable {
 	@Column(name = "email")
 	private String email;
 
-	
 	@Column(name = "type")
 	private String type;
 
-
-	
 	@Column(name = "role")
 	private String role;
 

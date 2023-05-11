@@ -41,32 +41,41 @@ public class IssueRestController {
 	@Autowired
 	private IssueService issueService;
 
-// ==============================================================
-	// Issue Book Api (Admin)
-// ==============================================================
+	
+	
+	
+	
+	// ==============================================================
+	// Issue Book Api 
+	// ==============================================================
 	@PostMapping("api-librarian/issue/book")
 	public ResponseEntity<String> issueBook(@RequestBody Issue issue) {
-
 		Book book = bookService.getBookById(issue.getBook().getId()).get();
 		User member = userService.getMember(issue.getUser().getId()).get();
 		if (book.getStatus() == Constants.BOOK_STATUS_AVAILABLE) {
 			book.setStatus(Constants.BOOK_STATUS_ISSUED);
 			issue.setBook(book);
 			issue.setUser(member);
-
 			bookService.saveBook(book);
-
 			Issue issueDetail = issueService.IssueBookToMember(issue);
 			List<Issue> issue1 = member.getIssue();
 			issue1.add(issueDetail);
-
 			member.setIssue(issue1);
 			userService.save(member);
 		}
 		return new ResponseEntity<String>("BookIssued to Member " + member.getId(), HttpStatus.OK);
-
 	}
 
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	// ==============================================================
 	// Issue Books Api(Issue Mulliple books to User) (Admin)
 	// ==============================================================
@@ -90,9 +99,12 @@ public class IssueRestController {
 		return new ResponseEntity<String>("BOOKS ARE ISSUED SUCCESSFULLY TO THE USER", HttpStatus.OK);
 	}
 
-// ==============================================================
+	
+	
+	
+	// ==============================================================
 	// Return Book Api (Admin)
-// ==============================================================
+	// ==============================================================
 	@PutMapping("api-librarian/return/book")
 	public ResponseEntity<String> returnBook(@RequestParam("issue_id") Long id) {
 
@@ -111,8 +123,13 @@ public class IssueRestController {
 		return new ResponseEntity<String>("Book Returned Successfully", HttpStatus.ACCEPTED);
 	}
 
+	
+	
+	
+	
+	
 	// ==============================================================
-	// Return Book Api (Multiple books return) (Admin)
+	// Return Book Api (Multiple books return) 
 	// ==============================================================
 	@PutMapping("api-librarian/return/books/{user_id}/{book_ids}")
 	public ResponseEntity<String> returnBooks(@PathVariable("user_id") Long id, @PathVariable List<Long> book_ids) {
@@ -130,8 +147,10 @@ public class IssueRestController {
 		return new ResponseEntity<String>("Books Returned Successfully", HttpStatus.OK);
 	}
 
+	
+	
 	// ==============================================================
-	// Issue Records Api (Admin)
+	// Issue Records Api 
 	// ==============================================================
 	@GetMapping("api-librarian/issue/record")
 	public ResponseEntity<List<Issue>> getRecord() {
@@ -143,10 +162,10 @@ public class IssueRestController {
 	
 	
 
+	
 	// ==============================================================
 	// Get Books Isuued to A Member
 	// ==============================================================
-	
 	@GetMapping("api-librarian/book/issue-list/{member_id}")
 	public ResponseEntity<List<Issue>> getIssuedBookOfMember(@PathVariable ("member_id") Long Id) {
 		
@@ -159,16 +178,9 @@ public class IssueRestController {
 	
 	
 	
-	
-	
-	
-	
-	
-	
-	
 
 	// ==============================================================
-	// Check Fine Status Api (Admin)
+	// Check Fine Status Api 
 	// ==============================================================
 	@GetMapping("api-librarian/fine")
 	public ResponseEntity<String> checkFineStatus(@RequestParam("issue_id") Long id) {

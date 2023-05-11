@@ -1,6 +1,5 @@
 package com.gl.smartlms;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -18,20 +17,33 @@ public class ApplicationStartup implements ApplicationListener<ApplicationReadyE
 	@Autowired
 	private UserService userService;
 
-	
 // ==============================================================
-			// = onLoad The Admin And Librarian
+	// = onLoad The Admin And Librarian
 // ==============================================================
 	@Override
 	public void onApplicationEvent(ApplicationReadyEvent applicationReadyEvent) {
 		initDatabaseEntities();
 	}
 
+	// ==============================================================
+	// = ADMIN AND LIBRARIAN WILL BE AVAILABLE ON APPLICATION STARTUP
+	// ==============================================================
 	private void initDatabaseEntities() {
 
+		// ==============================================================
+		// = Only When if the User Table Is Empty
+		// ==============================================================
 		if (userService.getAllUser().size() == 0) {
+
+			// ==============================================================
+			// = Registering Admin
+			// =================================================================
 			userService.save(new User("admin", "admin", "male", "vivek", "kumar", "gupta", "08-08-1999",
 					"vivekgp8899@gmail.com", "8527648963", Constants.MEMBER_OTHER, Constants.ROLE_ADMIN));
+
+			// ==============================================================
+			// = Registering Librarian
+			// =================================================================
 			userService.save(new User("librarian", "librarian", "male", "saksham", "", "sharma", "10-03-1999",
 					"saksham@gmail.com", "9854352341", Constants.MEMBER_OTHER, Constants.ROLE_LIBRARIAN));
 

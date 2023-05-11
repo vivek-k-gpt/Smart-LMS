@@ -32,8 +32,7 @@ public class UserRestController {
 	@PostMapping(value = "user/register", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> registerUser(@Valid @RequestBody User user) {
 		userService.findByUsername(user.getUsername());
-		user.setRole(Constants.ROLE_USER);
-		Optional<User> user1 = Optional.ofNullable(userService.save(user));
+		Optional<User> user1 = Optional.ofNullable(userService.saveUser(user));
 		if (user1.isEmpty()) {
 			throw new RegistrationFailedException("Registration Failed");
 		}
@@ -48,10 +47,7 @@ public class UserRestController {
 	@RequestMapping(value = "api-admin/librarian/register", method = RequestMethod.POST)
 	public ResponseEntity<String> saveMember(@Valid @RequestBody User user) {
 		userService.findByUsername(user.getUsername());
-	
-		user.setType(Constants.MEMBER_OTHER);
-		user.setRole(Constants.ROLE_LIBRARIAN);
-		Optional<User> user1 = Optional.ofNullable(userService.save(user));
+		Optional<User> user1 = Optional.ofNullable(userService.saveLibrarian(user));
 		if (user1.isEmpty()) {
 			throw new RegistrationFailedException("Registration Failed ......");
 		}
@@ -59,18 +55,19 @@ public class UserRestController {
 	}
 
 
-	//admin
+	
+	
 	// ==============================================================
 	// User Count API
 	// ==============================================================
-
 	@GetMapping("api-admin/user/count")
 	public ResponseEntity<String> countAllUsers() {
 		Long userCount = userService.getTotalCount();
 			return new ResponseEntity<String>(userCount.toString(), HttpStatus.OK);
 		} 
+
 	
-	//admin
+	
 	// ==============================================================
 	// Faculty Member Count API (Admin)
 	// ==============================================================
@@ -80,7 +77,9 @@ public class UserRestController {
 			return new ResponseEntity<String>(facultyCount.toString(), HttpStatus.OK);
 		}
 	
-	//admin
+
+	
+	
 	// ==============================================================
 	// Student Member Count API (Admin)
 	// ==============================================================
@@ -92,7 +91,9 @@ public class UserRestController {
 
 
 	
-	//admin
+
+	
+	
 	// ==============================================================
 	// List Users Api(Sorted) (Admin)
 	// ==============================================================
@@ -102,7 +103,9 @@ public class UserRestController {
 		return new ResponseEntity<List<User>>(list, HttpStatus.FOUND);
 	}
 	
-	//admin
+
+	
+	
 	// ==============================================================
 	// List Student Member Api (Admin)
 	// ==============================================================
@@ -112,7 +115,10 @@ public class UserRestController {
 		return new ResponseEntity<List<User>>(list, HttpStatus.FOUND);
 	}
 
-	//admin
+
+	
+	
+	
 	// ==============================================================
 	// List Faculty Member Api (Admin)
 	// ==============================================================
@@ -123,11 +129,11 @@ public class UserRestController {
 	}
 
 
-	//admin+librarian
+	
+	
 	// ==============================================================
 	// Find Member API(change) (Admin)
 	// ==============================================================
-
 	@GetMapping(value = "api-admin-librarian/find/{id}")
 	public ResponseEntity<User> findUserById(@PathVariable Long id) {
 		User user = userService.getMember(id).get();
@@ -135,7 +141,8 @@ public class UserRestController {
 	}
 
 	
-	//all
+	
+	
 	// ==============================================================
 	// Update Member API (Admin)
 	// ============================================================
@@ -147,11 +154,13 @@ public class UserRestController {
 				HttpStatus.ACCEPTED);
 	}
 
-	//admin
+
+	
+	
+	
 	// ==============================================================
 	// Delete Member API (Admin)
 	// ==============================================================
-	
 	@RequestMapping(value = "api-admin/delete/{id}", method = RequestMethod.DELETE)
 	public ResponseEntity<String> removeUser(@PathVariable Long id) {
 		User member = userService.getMember(id).get();

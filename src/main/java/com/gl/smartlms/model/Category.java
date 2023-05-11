@@ -58,7 +58,7 @@ public class Category implements Serializable {
 	@Column(name = "notes")
 	@Size(max = 1000, message = "*Must not exceed 1000 characters.")
 	private String notes;
-	
+
 	@CreationTimestamp
 	@JsonFormat(pattern = "dd-MM-yyyy")
 	@Column(name = "create_date")

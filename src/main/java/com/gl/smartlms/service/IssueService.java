@@ -2,12 +2,10 @@ package com.gl.smartlms.service;
 
 import java.util.Date;
 
-
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
-
 
 import com.gl.smartlms.model.Book;
 import com.gl.smartlms.model.Issue;
@@ -21,8 +19,6 @@ public interface IssueService {
 	public Issue returnBookUpdation(Issue issue);
 
 	public Optional<Issue> getIssueDetailsById(Long id);
-	
-	
 
 	public int compareDates(Date expected_date, Date return_date);
 

@@ -11,5 +11,4 @@ public class UserNameNotFoundException extends RuntimeException {
 		super(message);
 	}
 
-	
 }

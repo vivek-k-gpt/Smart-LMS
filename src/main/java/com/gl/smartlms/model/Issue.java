@@ -38,7 +38,7 @@ public class Issue implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
-	
+
 	@CreationTimestamp
 	@JsonFormat(pattern = "dd-MM-yyyy")
 	@CreatedDate
@@ -51,14 +51,11 @@ public class Issue implements Serializable {
 	@Column(name = "returned")
 	private int returned;
 
-
 	@JsonFormat(pattern = "dd-MM-yyyy")
 	@CreatedDate
 	@Column(name = "expectedte_date_of_return")
 	private Date expectedDateOfReturn;
 
-	
-	
 	@JsonFormat(pattern = "dd-MM-yyyy")
 	@CreatedDate
 	@Column(name = "return_date")

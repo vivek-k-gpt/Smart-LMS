@@ -1,6 +1,5 @@
 package com.gl.smartlms.service;
 
-
 import java.util.List;
 
 
@@ -12,29 +11,18 @@ import org.springframework.stereotype.Service;
 
 import com.gl.smartlms.model.User;
 
-
-
-
 @Service
 public interface UserService {
 
- 
 	public List<User> getAll();
 
-	
-	
-	
-	
 	public Optional<User> getMember(Long id);
 
 	public Long getTotalCount();
 
 	public Long getFacultyCount();
-	
+
 	public Long getStudentsCount();
-	
-	 
-	
 
 	public User getUserValidate(String username, String password);
 
@@ -44,35 +32,20 @@ public interface UserService {
 
 	public List<User> getAllFaculty();
 
-	//public List<User> getAllActive();
 
-	//public List<User> getAllInActive();
 
 	public boolean hasUsage(User member);
 
 	public void deleteMember(Long id);
 
-
-
-
-
 	public List<User> getAllUser();
-
-
-
-
 
 	public void findByUsername(String username);
 
-
-
-
-
 	public void update(@Valid User member, User user);
 
-	
+	public User saveLibrarian( User user);
 
+	public User saveUser(@Valid User user);
 
-
-	
 }

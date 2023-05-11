@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import com.gl.smartlms.advice.BookNotFoundException;
+
 import com.gl.smartlms.advice.BookTagAlreadyExistException;
 import com.gl.smartlms.constants.Constants;
 import com.gl.smartlms.model.Book;
@@ -21,7 +21,7 @@ import com.gl.smartlms.model.Category;
 import com.gl.smartlms.service.BookService;
 import com.gl.smartlms.service.CategoryService;
 
-import jakarta.validation.Valid;
+
 
 @RestController
 
@@ -55,6 +55,9 @@ public class BookRestController {
 		}
 	}
 
+	
+	
+	
 // ==============================================================
 //						 Count
 // ==============================================================
@@ -69,6 +72,10 @@ public class BookRestController {
 		}
 
 
+	
+	
+	
+	
 	// ==============================================================
 	// Count Available Book Api 
 	// ==============================================================
@@ -78,16 +85,24 @@ public class BookRestController {
 			return new ResponseEntity<String>(bookCount.toString(), HttpStatus.OK);
 		}
 
+	
+	
+	
 	// ==============================================================
 	// Count Issued Book Api (Admin)
 	// ==============================================================
 	@GetMapping(value = "api-admin-librarian/book/issued/count", produces = MediaType.APPLICATION_JSON_VALUE)
+	
 	public ResponseEntity<String> countAllIssuedBooks() {
 		Long bookCount = bookService.getIssuedBookCount();
 			return new ResponseEntity<String>(bookCount.toString(), HttpStatus.OK);
 		}
 		
 
+	
+	
+	
+	
 // ==============================================================
 	// LIST (Book Based Filtering)
 // ==============================================================
@@ -102,6 +117,10 @@ public class BookRestController {
 		return new ResponseEntity<List<Book>>(list, HttpStatus.FOUND);
 	}
 
+	
+	
+	
+	
 	// ==============================================================
 	// List All Book(By Title) Api (Admin + User)
 	// ==============================================================
@@ -112,6 +131,7 @@ public class BookRestController {
 	}
 
 
+	
 
 	// ==============================================================
 	// List All Book(By Authors) Api (Admin + User)
@@ -122,6 +142,10 @@ public class BookRestController {
 		return new ResponseEntity<List<Book>>(book, HttpStatus.FOUND);
 	}
 
+	
+	
+	
+	
 	// ==============================================================
 	// List All Book(By publisher) Api (Admin + User)
 	// ==============================================================
@@ -131,6 +155,10 @@ public class BookRestController {
 		return new ResponseEntity<List<Book>>(book, HttpStatus.FOUND);
 	}
 
+	
+	
+	
+	
 // ==============================================================
 	// List All Available Books Api (Admin + User)
 // ==============================================================
@@ -140,6 +168,10 @@ public class BookRestController {
 		return new ResponseEntity<List<Book>>(availableBooks, HttpStatus.OK);
 	}
 
+	
+	
+	
+	
 // ==============================================================
 	// List All Issued Books Api (Admin )
 // ==============================================================
@@ -149,6 +181,14 @@ public class BookRestController {
 		return new ResponseEntity<List<Book>>(issuedBooks, HttpStatus.OK);
 	}
 
+	
+	
+	
+	
+	
+	
+	
+	
 //==============================================================
 //				LIST CAtegory Based Filtering
 //==============================================================
@@ -163,6 +203,12 @@ public class BookRestController {
 		return new ResponseEntity<List<Book>>(list, HttpStatus.FOUND);
 	}
 
+	
+	
+	
+	
+	
+	
 //==============================================================
 //List All Books In A category (By Category Id)
 //==============================================================		
@@ -174,6 +220,9 @@ public class BookRestController {
 		return new ResponseEntity<List<Book>>(list, HttpStatus.FOUND);
 	}
 
+	
+	
+	
 //==============================================================
 //List All Issued Books In A category (By Category Name)
 //==============================================================
@@ -184,6 +233,12 @@ public class BookRestController {
 		return new ResponseEntity<List<Book>>(issuedBooks, HttpStatus.OK);
 	}
 
+	
+	
+	
+	
+	
+	
 //==============================================================
 //List All Available Books(Not Issued) In A category (By Category Name)
 //==============================================================
@@ -194,6 +249,11 @@ public class BookRestController {
 		return new ResponseEntity<List<Book>>(availableBooks, HttpStatus.OK);
 	}
 
+	
+	
+	
+	
+	
 //==============================================================
 //						FIND
 //==============================================================
@@ -207,6 +267,8 @@ public class BookRestController {
 		return new ResponseEntity<Book>(book, HttpStatus.FOUND);
 	}
 
+	
+	
 //==============================================================
 //find All Books  By List of Book ids (Admin + User)
 //==============================================================
@@ -216,6 +278,15 @@ public class BookRestController {
 		return new ResponseEntity<List<Book>>(list, HttpStatus.FOUND);
 	}
 
+	
+	
+	
+	
+	
+	
+	
+	
+	
 //==============================================================
 //			Update
 //==============================================================
@@ -269,7 +340,12 @@ public class BookRestController {
 
 
 	
-	//libraraian
+//==============================================================
+//	Delete
+//==============================================================
+	
+	
+	
 //==============================================================
 //Delete Book By Id (Admin)
 //==============================================================

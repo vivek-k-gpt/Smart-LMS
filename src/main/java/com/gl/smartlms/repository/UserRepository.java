@@ -18,9 +18,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 	List<User> findByTypeContaining(String keyword);
 
-	//List<User> findByActive(int active);
-
 	User findByUsername(String username);
 
-	
 }

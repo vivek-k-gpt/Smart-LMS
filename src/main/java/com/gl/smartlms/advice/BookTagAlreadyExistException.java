@@ -12,5 +12,4 @@ public class BookTagAlreadyExistException extends RuntimeException {
 		// TODO Auto-generated constructor stub
 	}
 
-	
 }

@@ -33,7 +33,7 @@ public class CategoryServiceImpl implements CategoryService {
 	public Optional<Category> getCategory(Long id) {
 		Optional<Category> category = categoryRepository.findById(id);
 		if (category.isEmpty()) {
-			throw new CategoryNotFoundException("Category Is Not Available with id "+id);
+			throw new CategoryNotFoundException("Category Is Not Available with id " + id);
 		}
 		return category;
 	}
@@ -41,7 +41,7 @@ public class CategoryServiceImpl implements CategoryService {
 	@Override
 	public List<Category> getAll() {
 		List<Category> category = categoryRepository.findAll();
-		if(category.isEmpty()) {
+		if (category.isEmpty()) {
 			throw new NoContentFoundException("No Category is Present List is Empty");
 		}
 		return category;
@@ -56,7 +56,7 @@ public class CategoryServiceImpl implements CategoryService {
 	@Override
 	public List<Category> getAllBySort() {
 		List<Category> category = categoryRepository.findAllByOrderByNameAsc();
-		if(category.isEmpty()) {
+		if (category.isEmpty()) {
 			throw new NoContentFoundException("No Category is Present List is Empty");
 		}
 		return category;
@@ -64,16 +64,14 @@ public class CategoryServiceImpl implements CategoryService {
 
 	@Override
 	public Optional<Category> getCategoryByName(String name) {
-	
+
 		Optional<Category> category = categoryRepository.findByName(name);
-		if(category.isEmpty()) {
-			throw new CategoryNotFoundException("No Category is Present With Name "+ name);
+		if (category.isEmpty()) {
+			throw new CategoryNotFoundException("No Category is Present With Name " + name);
 		}
-		
+
 		return category;
 	}
-	
-	
 
 	@Override
 	public boolean hasUsage(Category category) {
@@ -83,13 +81,13 @@ public class CategoryServiceImpl implements CategoryService {
 	@Override
 	public void deleteCategory(Long id) {
 		categoryRepository.deleteById(id);
-		
+
 	}
 
 	@Override
 	public void deleteCategoryByCategoryObject(Category category) {
 		categoryRepository.delete(category);
-		
+
 	}
 
 }
