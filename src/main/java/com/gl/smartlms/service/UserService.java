@@ -32,9 +32,7 @@ public interface UserService {
 
 	public List<User> getAllFaculty();
 
-
-
-	public boolean hasUsage(User member);
+	//public boolean hasUsage(User member);
 
 	public void deleteMember(Long id);
 
@@ -42,7 +40,7 @@ public interface UserService {
 
 	public void findByUsername(String username);
 
-	public void update(@Valid User member, User user);
+	public void update(User member, User user);
 
 	public User saveLibrarian( User user);
 

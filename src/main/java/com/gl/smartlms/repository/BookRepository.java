@@ -1,6 +1,8 @@
 package com.gl.smartlms.repository;
 
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -11,7 +13,7 @@ import com.gl.smartlms.model.Category;
 @Repository
 public interface BookRepository extends JpaRepository<Book, Long> {
 
-	public Book findByTag(String tag);
+	public List<Book> findByTag(String tag);
 
 	public List<Book> findByAuthors(String authors);
 
@@ -35,6 +37,6 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 	@Query(value = "SELECT count(id) FROM Book where status = :status")
 	public Long countBooksBasedOnStatus(@Param("status") Integer status);
 
-	public Book findByCategoryAndTag(Category category, String tag);
+	public Optional<Book> findByCategoryAndTag(Category category, String tag);
 
 }

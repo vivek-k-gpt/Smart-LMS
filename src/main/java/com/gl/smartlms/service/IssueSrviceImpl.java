@@ -101,4 +101,15 @@ public class IssueSrviceImpl implements IssueService {
 		return issue;
 	}
 
+	@Override
+	public boolean hasUsage(User member) {
+		List<Issue> issueList = issueRepository.findByUserAndReturned(member, Constants.BOOK_NOT_RETURNED);
+		if(issueList.size() !=0) {
+			return false;
+		}
+		return true;
+	}
+
+	
+
 }

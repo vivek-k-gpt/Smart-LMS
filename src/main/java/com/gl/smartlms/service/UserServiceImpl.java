@@ -14,6 +14,7 @@ import com.gl.smartlms.advice.UserNameNotFoundException;
 import com.gl.smartlms.advice.UserNotFoundException;
 import com.gl.smartlms.constants.Constants;
 import com.gl.smartlms.model.User;
+import com.gl.smartlms.repository.IssueRepository;
 import com.gl.smartlms.repository.UserRepository;
 
 @Service
@@ -24,6 +25,8 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired(required = true)
 	private BCryptPasswordEncoder beBCryptPasswordEncoder;
+	
+	
 
 	public Long getTotalCount() {
 		return userRepository.count();
@@ -96,11 +99,11 @@ public class UserServiceImpl implements UserService {
 		return facultylist;
 	}
 
-	@Override
-	public boolean hasUsage(User member) {
-
-		return member.getIssue().size() == 0;
-	}
+//	@Override
+//	public boolean hasUsage(User member) {
+//
+//		return member.getIssue().size() == 0;
+//	}
 
 	@Override
 	public void deleteMember(Long id) {
@@ -131,7 +134,6 @@ public class UserServiceImpl implements UserService {
 		member.setRole(user.getRole());
 		member.setUsername(user.getUsername());
 		member.setType(user.getType());
-
 		member.setJoiningDate(user.getJoiningDate());
 		userRepository.save(member);
 

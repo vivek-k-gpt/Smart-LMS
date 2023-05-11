@@ -30,4 +30,8 @@ public interface IssueService {
 
 	public List<Issue> getIssueByMember(User member);
 
+	public boolean hasUsage(User member);
+
+	
+
 }

@@ -38,16 +38,17 @@ public class BookRestController {
 // ==============================================================//
 
 	// ==============================================================
-	// Add Category Api 
+		// Add Category Api 
 	// ==============================================================
-	@PostMapping("api-librarian/book/add/{id}")
-	public ResponseEntity<String> addBook(@RequestBody Book book, @PathVariable("id") Long id) {
+	@PostMapping("api-librarian/book/add/{category_id}")
+	public ResponseEntity<String> addBook(@RequestBody Book book, @PathVariable("category_id") Long id) {
 		Category category = categoryService.getCategory(id).get();
+		String tag = book.getTag();
+		Optional<Book> checkBook = bookService.getByTagInCategory(tag,category);
+		if (checkBook.isPresent()) {
+			throw new BookTagAlreadyExistException("Tag is Already Present in Category.....Please Select another Tag");
+		}else { 
 		book.setCategory(category);
-		Book book1 = bookService.getByTag(book.getTag());
-		if (book1 != null) {
-			throw new BookTagAlreadyExistException("Tag is Already Present .....Please Select another Tag");
-		} else {
 			bookService.addNewBook(book);
 			return new ResponseEntity<String>(
 					"Book get Added with Title " + book.getTitle() + " and Category " + category.getName(),
@@ -71,10 +72,6 @@ public class BookRestController {
 			return new ResponseEntity<String>(bookCount.toString(), HttpStatus.OK);
 		}
 
-
-	
-	
-	
 	
 	// ==============================================================
 	// Count Available Book Api 
@@ -89,7 +86,7 @@ public class BookRestController {
 	
 	
 	// ==============================================================
-	// Count Issued Book Api (Admin)
+	// Count Issued Book Api 
 	// ==============================================================
 	@GetMapping(value = "api-admin-librarian/book/issued/count", produces = MediaType.APPLICATION_JSON_VALUE)
 	
@@ -108,7 +105,7 @@ public class BookRestController {
 // ==============================================================
 
 	// ==============================================================
-	// List All Book Api (Admin + User)
+	// List All Book Api 
 	// ==============================================================
 	
 	@GetMapping("api-all/book/list/all")
@@ -122,7 +119,7 @@ public class BookRestController {
 	
 	
 	// ==============================================================
-	// List All Book(By Title) Api (Admin + User)
+	// List All Book(By Title) Api 
 	// ==============================================================
 	@GetMapping("api-all/book/list-by-title/{title}")
 	public ResponseEntity<List<Book>> getBytitle(@PathVariable String title) {
@@ -130,7 +127,16 @@ public class BookRestController {
 		return new ResponseEntity<List<Book>>(list, HttpStatus.FOUND);
 	}
 
-
+	
+	
+	// ==============================================================
+	// List All Book(By Tag) Api 
+	// ==============================================================
+	@GetMapping("api-all/book/list-by-tag/{tag}")
+	public ResponseEntity<List<Book>> getByTag(@PathVariable String tag) {
+		List<Book> list = bookService.getBookWithTag(tag);
+		return new ResponseEntity<List<Book>>(list, HttpStatus.FOUND);
+	}
 	
 
 	// ==============================================================
@@ -144,10 +150,8 @@ public class BookRestController {
 
 	
 	
-	
-	
 	// ==============================================================
-	// List All Book(By publisher) Api (Admin + User)
+	// List All Book(By publisher) Api 
 	// ==============================================================
 	@GetMapping(value = "api-all/book/list-by-publisher/{publisher}")
 	public ResponseEntity<List<Book>> getBooksByPublisher(@PathVariable String publisher) {
@@ -155,12 +159,9 @@ public class BookRestController {
 		return new ResponseEntity<List<Book>>(book, HttpStatus.FOUND);
 	}
 
-	
-	
-	
-	
+
 // ==============================================================
-	// List All Available Books Api (Admin + User)
+	// List All Available Books Api 
 // ==============================================================
 	@GetMapping(value = "api-all/book/available", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<Book>> getAllAvailableBooks() {
@@ -168,12 +169,9 @@ public class BookRestController {
 		return new ResponseEntity<List<Book>>(availableBooks, HttpStatus.OK);
 	}
 
-	
-	
-	
-	
+
 // ==============================================================
-	// List All Issued Books Api (Admin )
+	// List All Issued Books Api 
 // ==============================================================
 	@GetMapping("api-admin-librarian/book/issued")
 	public ResponseEntity<List<Book>> getAllIssuedBooks() {
@@ -181,13 +179,7 @@ public class BookRestController {
 		return new ResponseEntity<List<Book>>(issuedBooks, HttpStatus.OK);
 	}
 
-	
-	
-	
-	
-	
-	
-	
+
 	
 //==============================================================
 //				LIST CAtegory Based Filtering
@@ -204,10 +196,7 @@ public class BookRestController {
 	}
 
 	
-	
-	
-	
-	
+
 	
 //==============================================================
 //List All Books In A category (By Category Id)
@@ -221,8 +210,6 @@ public class BookRestController {
 	}
 
 	
-	
-	
 //==============================================================
 //List All Issued Books In A category (By Category Name)
 //==============================================================
@@ -233,11 +220,7 @@ public class BookRestController {
 		return new ResponseEntity<List<Book>>(issuedBooks, HttpStatus.OK);
 	}
 
-	
-	
-	
-	
-	
+
 	
 //==============================================================
 //List All Available Books(Not Issued) In A category (By Category Name)
@@ -249,10 +232,7 @@ public class BookRestController {
 		return new ResponseEntity<List<Book>>(availableBooks, HttpStatus.OK);
 	}
 
-	
-	
-	
-	
+
 	
 //==============================================================
 //						FIND
@@ -278,22 +258,14 @@ public class BookRestController {
 		return new ResponseEntity<List<Book>>(list, HttpStatus.FOUND);
 	}
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
 //==============================================================
 //			Update
 //==============================================================
 
 	
 	
-	//librarian
+
 //==============================================================
 //	Update Book Details (SAMECategory) (Admin)
 //==============================================================	
@@ -311,10 +283,6 @@ public class BookRestController {
 		return new ResponseEntity<String>("Succesfully Updated Book Details", HttpStatus.ACCEPTED);
 	}
 
-	
-	
-	
-	//librarian
 //==============================================================
 //Update Book Details (SAMECategory) (Admin)
 //==============================================================

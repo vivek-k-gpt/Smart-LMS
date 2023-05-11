@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.gl.smartlms.advice.RegistrationFailedException;
 import com.gl.smartlms.constants.Constants;
 import com.gl.smartlms.model.User;
+import com.gl.smartlms.service.IssueService;
 import com.gl.smartlms.service.UserService;
 
 @RestController
@@ -24,6 +25,9 @@ public class UserRestController {
 
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private IssueService issueService;
 	
 	
 	// ==============================================================
@@ -164,7 +168,7 @@ public class UserRestController {
 	@RequestMapping(value = "api-admin/delete/{id}", method = RequestMethod.DELETE)
 	public ResponseEntity<String> removeUser(@PathVariable Long id) {
 		User member = userService.getMember(id).get();
-		if (userService.hasUsage(member)) {
+		if (issueService.hasUsage(member)) {
 			userService.deleteMember(id);
 			return new ResponseEntity<String>("User Deleted Successfully", HttpStatus.OK);
 		} else {

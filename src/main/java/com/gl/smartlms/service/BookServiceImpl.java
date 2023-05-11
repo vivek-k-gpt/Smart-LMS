@@ -24,7 +24,7 @@ public class BookServiceImpl implements BookService {
 	private BookRepository bookRepository;
 
 	@Override
-	public Book getByTagInCategory(String tag, Category category) {
+	public Optional<Book> getByTagInCategory(String tag, Category category) {
 		return bookRepository.findByCategoryAndTag(category, tag);
 	}
 
@@ -114,7 +114,7 @@ public class BookServiceImpl implements BookService {
 
 	@Override
 	public List<Book> geAvailabletByCategory(Category category) {
-		List<Book> book = bookRepository.findByCategoryAndStatus(category, Constants.BOOK_STATUS_AVAILABLE);
+		List<Book> book = bookRepository.findByCategory(category);
 
 		if (book.isEmpty()) {
 			throw new NoContentFoundException("The list is Empty ...No book is this Category");
@@ -191,11 +191,18 @@ public class BookServiceImpl implements BookService {
 		bookRepository.delete(book);
 	}
 
+	
+
 	@Override
-	public Book getByTag(String tag) {
-
-		return bookRepository.findByTag(tag);
-
+	public List<Book> getBookWithTag(String tag) {
+		List<Book> book = bookRepository.findByTag(tag);
+		
+		if(book.isEmpty()) {
+			throw new NoContentFoundException("No Books  are available with tag" + tag + "List is Empty");
+		}
+		return book;
 	}
+
+
 
 }

@@ -103,8 +103,8 @@ public class GlobalExceptionHandler {
 		String message = ex.getMessage();
 		List<String> details = new ArrayList<>();
 		details.add("Book Is Not available");
-		ApiError errors = new ApiError(message, details, HttpStatus.NOT_ACCEPTABLE, LocalDateTime.now());
-		return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(errors);
+		ApiError errors = new ApiError(message, details, HttpStatus.NOT_FOUND, LocalDateTime.now());
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errors);
 	}
 
 	// ==============================================================
