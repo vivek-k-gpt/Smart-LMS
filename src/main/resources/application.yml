@@ -5,8 +5,7 @@
 
 server:
     port: 8899
-    servlet:
-        context-path: /lms
+
 spring:
     datasource:
         driver-class-name: com.mysql.cj.jdbc.Driver
@@ -24,3 +23,5 @@ spring:
                 dialect: org.hibernate.dialect.MySQLDialect
         show-sql: true
        
+     #servlet:
+ #context-path: /lms
