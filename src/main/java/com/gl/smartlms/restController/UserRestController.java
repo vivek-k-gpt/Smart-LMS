@@ -1,7 +1,10 @@
 package com.gl.smartlms.restController;
 import java.util.List;
+
 import java.util.Optional;
 import javax.validation.Valid;
+
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -15,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import com.gl.smartlms.advice.RegistrationFailedException;
-import com.gl.smartlms.constants.Constants;
+
 import com.gl.smartlms.model.User;
 import com.gl.smartlms.service.IssueService;
 import com.gl.smartlms.service.UserService;
@@ -30,12 +33,22 @@ public class UserRestController {
 	private IssueService issueService;
 	
 	
+	
+	
+	
+	
+	//logging 
+	private static final org.slf4j.Logger logger = LoggerFactory.getLogger(UserRestController.class);
+	
+	
+	
 	// ==============================================================
 	// User Register API (ALL) role - user
 	// ==============================================================
 	@PostMapping(value = "user/register", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> registerUser(@Valid @RequestBody User user) {
 		userService.findByUsername(user.getUsername());
+		logger.info("creating An User With type Student Or Faculty");
 		Optional<User> user1 = Optional.ofNullable(userService.saveUser(user));
 		if (user1.isEmpty()) {
 			throw new RegistrationFailedException("Registration Failed");
@@ -51,6 +64,7 @@ public class UserRestController {
 	@RequestMapping(value = "api-admin/librarian/register", method = RequestMethod.POST)
 	public ResponseEntity<String> saveMember(@Valid @RequestBody User user) {
 		userService.findByUsername(user.getUsername());
+		
 		Optional<User> user1 = Optional.ofNullable(userService.saveLibrarian(user));
 		if (user1.isEmpty()) {
 			throw new RegistrationFailedException("Registration Failed ......");

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gl.smartlms.advice.BookTagAlreadyExistException;
@@ -252,8 +253,8 @@ public class BookRestController {
 //==============================================================
 //find All Books  By List of Book ids (Admin + User)
 //==============================================================
-	@GetMapping(value = "api-all/book/find-books/{ids}")
-	public ResponseEntity<List<Book>> findBooksWithIdList(@PathVariable List<Long> ids) {
+	@GetMapping(value = "api-all/book/find-books")
+	public ResponseEntity<List<Book>> findBooksWithIdList(@RequestParam List<Long> ids) {
 		List<Book> list = bookService.getBooksByIdList(ids);
 		return new ResponseEntity<List<Book>>(list, HttpStatus.FOUND);
 	}
@@ -267,7 +268,7 @@ public class BookRestController {
 	
 
 //==============================================================
-//	Update Book Details (SAMECategory) (Admin)
+//	Update Book Details Same Category
 //==============================================================	
 	@PutMapping("api-librarian/book/update")
 	public ResponseEntity<String> updateBook( @RequestBody Book book) {
@@ -284,7 +285,7 @@ public class BookRestController {
 	}
 
 //==============================================================
-//Update Book Details (SAMECategory) (Admin)
+//Update Book Details (Different category)
 //==============================================================
 	@PutMapping(value = "api-librarian/book/update/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> updateBook(@RequestBody Book book, @PathVariable Long id) {
@@ -323,7 +324,7 @@ public class BookRestController {
 
 		if (book.getStatus() == Constants.BOOK_STATUS_ISSUED) {
 
-			return new ResponseEntity<String>("Book in use Can net be delete (book is not returnned)",
+			return new ResponseEntity<String>("Book in use Can not be delete (book is not returnned)",
 					HttpStatus.NOT_ACCEPTABLE);
 
 		} else {

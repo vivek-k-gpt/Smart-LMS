@@ -64,8 +64,8 @@ public class IssueRestController {
 	// ==============================================================
 	// Issue Books Api(Issue Mulliple books to User)
 	// ==============================================================
-	@PostMapping("api-librarian/issue/books/{ids}")
-	public ResponseEntity<String> issueBooks(@PathVariable("ids") List<Long> ids, @RequestBody Issue issue) {
+	@PostMapping("api-librarian/issue/books")
+	public ResponseEntity<String> issueBooks(@RequestParam  List<Long> ids, @RequestBody Issue issue) {
 		User member = userService.getMember(issue.getUser().getId()).get();
 		List<Issue> issuedList = member.getIssue();
 		String s = "";
@@ -110,6 +110,8 @@ public class IssueRestController {
 			Issue issue = issueService.getBookIssueDetails(book);
 			book.setStatus(Constants.BOOK_STATUS_AVAILABLE);
 			bookService.saveBook(book);
+			issue.setBook(null);
+			issue.setNote("Book returned Successfully having Book id :" + book.getId());
 			User member = userService.getMember(issue.getUser().getId()).get();
 		Issue issue1 =	issueService.returnBookUpdation(issue);
 			member.getIssue().remove(issue1);
@@ -133,8 +135,8 @@ public class IssueRestController {
 	// ==============================================================
 	// Return Book Api (Multiple books return)
 	// ==============================================================
-	@PutMapping("api-librarian/return/books/{user_id}/{book_ids}")
-	public ResponseEntity<String> returnBooks(@PathVariable("user_id") Long id, @PathVariable List<Long> book_ids) {
+	@PutMapping("api-librarian/return/books/{user_id}")
+	public ResponseEntity<String> returnBooks(@PathVariable("user_id") Long id, @RequestParam List<Long> book_ids) {
 
 		User user = userService.getMember(id).get();
 		for (Long b_id : book_ids) {
@@ -147,6 +149,8 @@ public class IssueRestController {
 			user.getIssue().remove(issue);
 
 			bookService.saveBook(book);
+			issue.setBook(null);
+			issue.setNote("Book returned Successfully having Book id :" + book.getId());
 			issueService.returnBookUpdation(issue);
 		}
 		userService.save(user);

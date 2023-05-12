@@ -51,8 +51,6 @@ public interface BookService {
 
 	public void delete(Book book);
 
-	
-
 	public List<Book> getBookWithTag(String tag);
 
 

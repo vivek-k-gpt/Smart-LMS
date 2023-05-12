@@ -32,8 +32,6 @@ public interface UserService {
 
 	public List<User> getAllFaculty();
 
-	//public boolean hasUsage(User member);
-
 	public void deleteMember(Long id);
 
 	public List<User> getAllUser();
