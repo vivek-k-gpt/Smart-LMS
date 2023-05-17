@@ -22,10 +22,13 @@ import com.gl.smartlms.model.Category;
 import com.gl.smartlms.service.BookService;
 import com.gl.smartlms.service.CategoryService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 
 
 @RestController
-
+@Tag(name = "Book")
 public class BookRestController {
 
 	@Autowired
@@ -41,6 +44,7 @@ public class BookRestController {
 	// ==============================================================
 		// Add Category Api 
 	// ==============================================================
+	@Operation(description = "Post End-Point for Adding Book In A Particular Category", summary = "API For Registering Book")
 	@PostMapping("api-librarian/book/add/{category_id}")
 	public ResponseEntity<String> addBook(@RequestBody Book book, @PathVariable("category_id") Long id) {
 		Category category = categoryService.getCategory(id).get();
@@ -67,6 +71,7 @@ public class BookRestController {
 	// ==============================================================
 	// Count Total Book Api 
 	// ==============================================================
+	@Operation(description = "Get End-Point for Counting Book", summary = "API For getting Book Count")
 	@GetMapping(value = "api-admin-librarian/book/count", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> countAllBooks() {
 		Long bookCount = bookService.getTotalCount();
@@ -77,6 +82,7 @@ public class BookRestController {
 	// ==============================================================
 	// Count Available Book Api 
 	// ==============================================================
+	@Operation(description = "Get End-Point for Counting Available Book", summary = "API For getting Available Book Count")
 	@GetMapping(value = "api-admin-librarian/book/available/count", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> countAllAvaialbleBooks() {
 		Long bookCount = bookService.getAvailableBookCount();
@@ -89,8 +95,8 @@ public class BookRestController {
 	// ==============================================================
 	// Count Issued Book Api 
 	// ==============================================================
+	@Operation(description = "Get End-Point for Counting Issued Book", summary = "API For getting Issued Book Count")
 	@GetMapping(value = "api-admin-librarian/book/issued/count", produces = MediaType.APPLICATION_JSON_VALUE)
-	
 	public ResponseEntity<String> countAllIssuedBooks() {
 		Long bookCount = bookService.getIssuedBookCount();
 			return new ResponseEntity<String>(bookCount.toString(), HttpStatus.OK);
@@ -108,7 +114,7 @@ public class BookRestController {
 	// ==============================================================
 	// List All Book Api 
 	// ==============================================================
-	
+	@Operation(description = "Get End-Point for Listing All Book in", summary = "API For getting Books")
 	@GetMapping("api-all/book/list/all")
 	public ResponseEntity<List<Book>> showAllBooks() {
 		List<Book> list = bookService.getAll();
@@ -122,6 +128,7 @@ public class BookRestController {
 	// ==============================================================
 	// List All Book(By Title) Api 
 	// ==============================================================
+	@Operation(description = "Get End-Point for Listing All Books Of a Particular Title", summary = "API For getting Books By Book_Title")
 	@GetMapping("api-all/book/list-by-title/{title}")
 	public ResponseEntity<List<Book>> getBytitle(@PathVariable String title) {
 		List<Book> list = bookService.getBookWithTitle(title);
@@ -133,6 +140,7 @@ public class BookRestController {
 	// ==============================================================
 	// List All Book(By Tag) Api 
 	// ==============================================================
+	@Operation(description = "Get End-Point for Listing All Books Of a Particular Tag", summary = "API For getting Books By Book_Tag")
 	@GetMapping("api-all/book/list-by-tag/{tag}")
 	public ResponseEntity<List<Book>> getByTag(@PathVariable String tag) {
 		List<Book> list = bookService.getBookWithTag(tag);
@@ -143,6 +151,7 @@ public class BookRestController {
 	// ==============================================================
 	// List All Book(By Authors) Api (Admin + User)
 	// ==============================================================
+	@Operation(description = "Get End-Point for Listing All Books Of a Particular Author", summary = "API For getting Books By Author")
 	@GetMapping(value = "api-all/book/list-by-author/{authors}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<Book>> getBooksByAuthor(@PathVariable("authors") String authors) {
 		List<Book> book = bookService.getByAuthorName(authors);
@@ -154,6 +163,7 @@ public class BookRestController {
 	// ==============================================================
 	// List All Book(By publisher) Api 
 	// ==============================================================
+	@Operation(description = "Get End-Point for Listing All Books Of a Particular Publisher", summary = "API For getting Books By Publisher")
 	@GetMapping(value = "api-all/book/list-by-publisher/{publisher}")
 	public ResponseEntity<List<Book>> getBooksByPublisher(@PathVariable String publisher) {
 		List<Book> book = bookService.getBypublisherName(publisher);
@@ -164,6 +174,7 @@ public class BookRestController {
 // ==============================================================
 	// List All Available Books Api 
 // ==============================================================
+	@Operation(description = "Get End-Point for Listing All Available Books", summary = "API For getting Available Books")
 	@GetMapping(value = "api-all/book/available", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<Book>> getAllAvailableBooks() {
 		List<Book> availableBooks = bookService.checkAvailableBooks();
@@ -174,6 +185,7 @@ public class BookRestController {
 // ==============================================================
 	// List All Issued Books Api 
 // ==============================================================
+	@Operation(description = "Get End-Point for Listing All  Issued Books", summary = "API For getting  Issued Books")
 	@GetMapping("api-admin-librarian/book/issued")
 	public ResponseEntity<List<Book>> getAllIssuedBooks() {
 		List<Book> issuedBooks = bookService.checkIssuedBooks();
@@ -189,6 +201,7 @@ public class BookRestController {
 //==============================================================
 // List All Books In A category (By Category Name)
 //==============================================================	
+	@Operation(description = "Get End-Point for Listing All Books Of a Particular Category Bt Category_Name", summary = "API For getting Books Of a Category By Category_Name")
 	@GetMapping(value = "api-all/category/{category_name}/book/all", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<Book>> getAvailableBooksInCategory(@PathVariable("category_name") String name) {
 		Category category1 = categoryService.getCategoryByName(name).get();
@@ -202,6 +215,7 @@ public class BookRestController {
 //==============================================================
 //List All Books In A category (By Category Id)
 //==============================================================		
+	@Operation(description = "Get End-Point for Listing All Books Of a Particular Category By Category_Id", summary = "API For getting Books Of a Category By Category_Id")
 	@GetMapping(value = "api-all/category/book/all/{category_id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<Book>> findBooksByCategory(@PathVariable("category_id") Long id) {
 
@@ -214,9 +228,10 @@ public class BookRestController {
 //==============================================================
 //List All Issued Books In A category (By Category Name)
 //==============================================================
-	@GetMapping(value = "api-admin-librarian/category/book/issued/all/{type}")
-	public ResponseEntity<List<Book>> getAllIssuedBooksInCategory(@PathVariable String type) {
-		Category category = categoryService.getCategoryByName(type).get();
+	@Operation(description = "Get End-Point for Listing Issued Books Of a Particular Category By Category_Name", summary = "API For getting Issued Books Of a Category By Category_Name")
+	@GetMapping(value = "api-admin-librarian/category/book/issued/all/{category_name}")
+	public ResponseEntity<List<Book>> getAllIssuedBooksInCategory(@PathVariable ("category_name") String name) {
+		Category category = categoryService.getCategoryByName(name).get();
 		List<Book> issuedBooks = bookService.listCategoryIssuedBooks(category);
 		return new ResponseEntity<List<Book>>(issuedBooks, HttpStatus.OK);
 	}
@@ -226,9 +241,10 @@ public class BookRestController {
 //==============================================================
 //List All Available Books(Not Issued) In A category (By Category Name)
 //==============================================================
-	@GetMapping(value = "api-all/category/book/available/all/{type}")
-	public ResponseEntity<List<Book>> getAllAvailableBooksInCategory(@PathVariable String type) {
-		Category category = categoryService.getCategoryByName(type).get();
+	@Operation(description = "Get End-Point for Listing Availavle Books Of a Particular Category By Category_Name", summary = "API For getting  Available Books Of a Category By Category_Name")
+	@GetMapping(value = "api-all/category/book/available/all/{category_name}")
+	public ResponseEntity<List<Book>> getAllAvailableBooksInCategory(@PathVariable ("category_name") String name) {
+		Category category = categoryService.getCategoryByName(name).get();
 		List<Book> availableBooks = bookService.listCategoryAvailableBooks(category);
 		return new ResponseEntity<List<Book>>(availableBooks, HttpStatus.OK);
 	}
@@ -242,8 +258,9 @@ public class BookRestController {
 // ==============================================================
 // find All Book(By id) Api (Admin + User)
 // ==============================================================
-	@GetMapping(value = "api-all/book/find/{id}")
-	public ResponseEntity<Book> findBookById(@PathVariable Long id) {
+	@Operation(description = "Get End-Point for Finding Book By Id", summary = "API For Searching Book")
+	@GetMapping(value = "api-all/book/find/{book_id}")
+	public ResponseEntity<Book> findBookById(@PathVariable ("book_id") Long id) {
 		Book book = bookService.getBookById(id).get();
 		return new ResponseEntity<Book>(book, HttpStatus.FOUND);
 	}
@@ -251,10 +268,11 @@ public class BookRestController {
 	
 	
 //==============================================================
-//find All Books  By List of Book ids (Admin + User)
+//find All Books  By List of Book ids 
 //==============================================================
+	@Operation(description = "Get End-Point for Finding Books By List Of Book_Id", summary = "API For Searching Books")
 	@GetMapping(value = "api-all/book/find-books")
-	public ResponseEntity<List<Book>> findBooksWithIdList(@RequestParam List<Long> ids) {
+	public ResponseEntity<List<Book>> findBooksWithIdList(@RequestParam ("Book_ids") List<Long> ids) {
 		List<Book> list = bookService.getBooksByIdList(ids);
 		return new ResponseEntity<List<Book>>(list, HttpStatus.FOUND);
 	}
@@ -269,7 +287,8 @@ public class BookRestController {
 
 //==============================================================
 //	Update Book Details Same Category
-//==============================================================	
+//==============================================================
+	@Operation(description = "Put End-Point for Editing Book Details", summary = "API For Updating Book")
 	@PutMapping("api-librarian/book/update")
 	public ResponseEntity<String> updateBook( @RequestBody Book book) {
 		Book book1 = bookService.getBookById(book.getId()).get();
@@ -287,8 +306,9 @@ public class BookRestController {
 //==============================================================
 //Update Book Details (Different category)
 //==============================================================
-	@PutMapping(value = "api-librarian/book/update/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> updateBook(@RequestBody Book book, @PathVariable Long id) {
+	@Operation(description = "Put End-Point for Editing Book Details and can Also Change Category", summary = "API For Updating Book and Category")
+	@PutMapping(value = "api-librarian/book/update/{category_id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> updateBook(@RequestBody Book book, @PathVariable ("category_id") Long id) {
 
 		Book book1 = bookService.getBookById(book.getId()).get();
 
@@ -318,8 +338,9 @@ public class BookRestController {
 //==============================================================
 //Delete Book By Id (Admin)
 //==============================================================
-	@DeleteMapping("api-librarian/delete/{id}")
-	public ResponseEntity<String> deleteBook(@PathVariable Long id) {
+	@Operation(description = "Delete End-Point for Deleting Book", summary = "API For Deleting Book")
+	@DeleteMapping("api-librarian/delete/{book_id}")
+	public ResponseEntity<String> deleteBook(@PathVariable ("book_id") Long id) {
 		Book book = bookService.getBookById(id).get();
 
 		if (book.getStatus() == Constants.BOOK_STATUS_ISSUED) {

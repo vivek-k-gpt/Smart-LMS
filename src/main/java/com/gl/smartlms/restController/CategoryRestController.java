@@ -20,12 +20,15 @@ import com.gl.smartlms.model.Category;
 
 import com.gl.smartlms.service.CategoryService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import java.util.List;
 
 import javax.validation.Valid;
 
 @RestController
-
+@Tag(name = "Category")
 public class CategoryRestController {
 
 	@Autowired
@@ -39,6 +42,7 @@ public class CategoryRestController {
 	// ==============================================================
 	// Add Category Api
 	// ==============================================================
+	@Operation(description = "Post End-Point for Adding Category", summary = "API For Registering Category")
 	@RequestMapping(value = "api-librarian/category/add", method = RequestMethod.POST)
 	public ResponseEntity<String> saveCategory(@Valid @RequestBody Category category) {
 		category = categoryService.addNew(category);
@@ -52,6 +56,7 @@ public class CategoryRestController {
 	// ==============================================================
 	// Update/Edit Category Details Api
 	// ==============================================================
+	@Operation(description = "Put End-Point for Editing Category Details", summary = "API For Updating Category")
 	@PutMapping("api-librarian/category/update")
 	public ResponseEntity<String> updateCategory(@Valid @RequestBody Category category) {
 		Category cat = categoryService.getCategory(category.getId()).get();
@@ -66,6 +71,7 @@ public class CategoryRestController {
 	// ==============================================================
 	// List Category Api
 	// ==============================================================
+	@Operation(description = "Get End-Point for Listing All Category", summary = "API For getting Categories")
 	@GetMapping("api-all/category/list")
 	public ResponseEntity<List<Category>> showAllMembers() {
 		List<Category> clist = categoryService.getAll();
@@ -79,6 +85,7 @@ public class CategoryRestController {
 	// ==============================================================
 	// List(Sorted) Category Api
 	// ==============================================================
+	@Operation(description = "Get End-Point for Listing All Category in Sorted Order", summary = "API For getting Categories Sort By Name")
 	@GetMapping("api-all/category/sorted-list")
 	public ResponseEntity<List<Category>> showAllCategorySortedByName() {
 		List<Category> clist = categoryService.getAllBySort();
@@ -90,8 +97,8 @@ public class CategoryRestController {
 	
 	// ==============================================================
 	// Count total Category Api
-	
 	// ==============================================================
+	@Operation(description = "Get End-Point for Counting Category", summary = "API For getting Category Count")
 	@GetMapping("api-admin-librarian/category/count")
 	public ResponseEntity<String> countAllCategory() {
 		Long categoryCount = categoryService.getTotalCount();
@@ -105,8 +112,9 @@ public class CategoryRestController {
 	// ==============================================================
 	// Find Category By Id Api
 	// ==============================================================
-	@GetMapping(value = "api-all/category/find/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Category> findCategoryById(@PathVariable Long id) {
+	@Operation(description = "Get End-Point for Finding Category By Id", summary = "API For Searching Category")
+	@GetMapping(value = "api-all/category/find/{category_id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Category> findCategoryById(@PathVariable  ("category_id") Long id) {
 		Category category = categoryService.getCategory(id).get();
 		return new ResponseEntity<Category>(category, HttpStatus.FOUND);
 	}
@@ -116,8 +124,9 @@ public class CategoryRestController {
 	// ==============================================================
 	// Delete Category By Id Api
 	// ==============================================================
-	@DeleteMapping("api-librarian/category/delete/{id}")
-	public ResponseEntity<String> deleteCategoryById(@PathVariable Long id) {
+	@Operation(description = "Delete End-Point for Deleting Category", summary = "API For Deleting Category")
+	@DeleteMapping("api-librarian/category/delete/{category_id}")
+	public ResponseEntity<String> deleteCategoryById(@PathVariable  ("category_id") Long id) {
 		Category category = categoryService.getCategory(id).get();
 		if (categoryService.hasUsage(category)) {
 			return new ResponseEntity<String>(

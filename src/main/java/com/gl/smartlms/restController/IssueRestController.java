@@ -18,9 +18,14 @@ import com.gl.smartlms.model.User;
 import com.gl.smartlms.service.BookService;
 import com.gl.smartlms.service.IssueService;
 import com.gl.smartlms.service.UserService;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import com.gl.smartlms.model.Issue;
 
 @RestController
+@Tag(name = "Issue-Return")
 public class IssueRestController {
 
 	@Autowired
@@ -37,6 +42,7 @@ public class IssueRestController {
 	// ==============================================================
 	// Issue Book Api 
 	// ==============================================================
+	@Operation(description = "Post End-Point for Issuing Book to a Member", summary = "API For Issuing Single Book")
 	@PostMapping("api-librarian/issue/book")
 	public ResponseEntity<String> issueBook(@RequestBody Issue issue) {
 		Book book = bookService.getBookById(issue.getBook().getId()).get();
@@ -64,8 +70,9 @@ public class IssueRestController {
 	// ==============================================================
 	// Issue Books Api(Issue Mulliple books to User)
 	// ==============================================================
+	@Operation(description = "Post End-Point for Issuing Books to a Member", summary = "API For Issuing Multiple Books")
 	@PostMapping("api-librarian/issue/books")
-	public ResponseEntity<String> issueBooks(@RequestParam  List<Long> ids, @RequestBody Issue issue) {
+	public ResponseEntity<String> issueBooks(@RequestParam ("Book_id") List<Long> ids, @RequestBody Issue issue) {
 		User member = userService.getMember(issue.getUser().getId()).get();
 		List<Issue> issuedList = member.getIssue();
 		String s = "";
@@ -101,6 +108,7 @@ public class IssueRestController {
 	// ==============================================================
 	// Return Book Api (Admin)
 	// ==============================================================
+	@Operation(description = "Put End-Point for Returning Back the Book", summary = "API For Returning Single Book")
 	@PutMapping("api-librarian/return/book")
 	public ResponseEntity<String> returnBook(@RequestParam("book_id") Long id) {
 		Book book = bookService.getBookById(id).get();
@@ -135,6 +143,7 @@ public class IssueRestController {
 	// ==============================================================
 	// Return Book Api (Multiple books return)
 	// ==============================================================
+	@Operation(description = "Post End-Point for Returning Multiple Books", summary = "API For Returning Multiple Book")
 	@PutMapping("api-librarian/return/books/{user_id}")
 	public ResponseEntity<String> returnBooks(@PathVariable("user_id") Long id, @RequestParam List<Long> book_ids) {
 
@@ -162,6 +171,7 @@ public class IssueRestController {
 	// ==============================================================
 	// Issue Records Api 
 	// ==============================================================
+	@Operation(description = "Get End-Point for getting All Issue/Return Record", summary = "API For getting issue-return record")
 	@GetMapping("api-librarian/issue/record")
 	public ResponseEntity<List<Issue>> getRecord() {
 		List<Issue> recordList = issueService.getRecordList();
@@ -176,8 +186,9 @@ public class IssueRestController {
 	// ==============================================================
 	// Get Books Isuued to A Member
 	// ==============================================================
-	@GetMapping("api-librarian/book/issue-list/{member_id}")
-	public ResponseEntity<List<Issue>> getIssuedBookOfMember(@PathVariable("member_id") Long Id) {
+	@Operation(description = "Get End-Point for getting All Issued Books to a Particular Member", summary = "API For getting issued Books Of a Member")
+	@GetMapping("api-librarian/book/issue-list/{user_id}")
+	public ResponseEntity<List<Issue>> getIssuedBookOfMember(@PathVariable("user_id") Long Id) {
 		User member = userService.getMember(Id).get();
 		List<Issue> issue = issueService.getIssueByMember(member);
 		return new ResponseEntity<List<Issue>>(issue, HttpStatus.OK);
@@ -188,6 +199,7 @@ public class IssueRestController {
 	// ==============================================================
 	// Check Fine Status Api 
 	// ==============================================================
+	@Operation(description = "Get End-Point for Checking The Applicability Of fine", summary = "API For getting fine Status of Book")
 	@GetMapping("api-librarian/fine")
 	public ResponseEntity<String> checkFineStatus(@RequestParam("issue_id") Long id) {
 		Issue issue = issueService.getIssueDetailsById(id).get();

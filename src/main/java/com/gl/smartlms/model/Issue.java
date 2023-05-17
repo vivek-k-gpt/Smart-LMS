@@ -10,6 +10,7 @@ import org.springframework.data.annotation.CreatedDate;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 
@@ -25,6 +26,7 @@ import lombok.Data;
 //==============================================================
 // = Issue Model
 //=============================================================
+
 @Entity
 @Table(name = "issue")
 @Data
