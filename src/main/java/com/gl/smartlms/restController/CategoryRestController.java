@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import org.springframework.web.bind.annotation.RestController;
 
-
 import com.gl.smartlms.model.Category;
 
 import com.gl.smartlms.service.CategoryService;
@@ -34,11 +33,6 @@ public class CategoryRestController {
 	@Autowired
 	private CategoryService categoryService;
 
-	
-	
-	
-	
-	
 	// ==============================================================
 	// Add Category Api
 	// ==============================================================
@@ -49,10 +43,6 @@ public class CategoryRestController {
 		return new ResponseEntity<String>("Category Added with type  " + category.getName(), HttpStatus.CREATED);
 	}
 
-	
-	
-	
-	
 	// ==============================================================
 	// Update/Edit Category Details Api
 	// ==============================================================
@@ -65,9 +55,6 @@ public class CategoryRestController {
 		return new ResponseEntity<String>("Category Updated With Type  " + cat.getName(), HttpStatus.ACCEPTED);
 	}
 
-	
-	
-	
 	// ==============================================================
 	// List Category Api
 	// ==============================================================
@@ -78,10 +65,6 @@ public class CategoryRestController {
 		return new ResponseEntity<List<Category>>(clist, HttpStatus.FOUND);
 	}
 
-	
-	
-	
-	
 	// ==============================================================
 	// List(Sorted) Category Api
 	// ==============================================================
@@ -92,9 +75,6 @@ public class CategoryRestController {
 		return new ResponseEntity<List<Category>>(clist, HttpStatus.FOUND);
 	}
 
-	
-	
-	
 	// ==============================================================
 	// Count total Category Api
 	// ==============================================================
@@ -106,27 +86,22 @@ public class CategoryRestController {
 		return new ResponseEntity<String>(categoryCount.toString(), HttpStatus.OK);
 	}
 
-	
-	
-	
 	// ==============================================================
 	// Find Category By Id Api
 	// ==============================================================
 	@Operation(description = "Get End-Point for Finding Category By Id", summary = "API For Searching Category")
 	@GetMapping(value = "api-all/category/find/{category_id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Category> findCategoryById(@PathVariable  ("category_id") Long id) {
+	public ResponseEntity<Category> findCategoryById(@PathVariable("category_id") Long id) {
 		Category category = categoryService.getCategory(id).get();
 		return new ResponseEntity<Category>(category, HttpStatus.FOUND);
 	}
 
-	
-	
 	// ==============================================================
 	// Delete Category By Id Api
 	// ==============================================================
 	@Operation(description = "Delete End-Point for Deleting Category", summary = "API For Deleting Category")
 	@DeleteMapping("api-librarian/category/delete/{category_id}")
-	public ResponseEntity<String> deleteCategoryById(@PathVariable  ("category_id") Long id) {
+	public ResponseEntity<String> deleteCategoryById(@PathVariable("category_id") Long id) {
 		Category category = categoryService.getCategory(id).get();
 		if (categoryService.hasUsage(category)) {
 			return new ResponseEntity<String>(

@@ -9,6 +9,9 @@ import com.gl.smartlms.model.Book;
 import com.gl.smartlms.model.Issue;
 import com.gl.smartlms.model.User;
 
+// ==============================================================
+// = ISSUE JPA Repository
+// =================================================================
 @Repository
 public interface IssueRepository extends JpaRepository<Issue, Long> {
 

@@ -1,4 +1,5 @@
 package com.gl.smartlms.restController;
+
 import java.util.List;
 
 import org.springframework.security.core.Authentication;
@@ -42,23 +43,19 @@ public class UserRestController {
 
 	@Autowired
 	private UserService userService;
-	
+
 	@Autowired
 	private IssueService issueService;
-	
+
 	@Autowired
 	private JwtService jwtService;
-	
+
 	@Autowired
 	private AuthenticationManager authenticationManager;
-	
-	
-	//logging 
+
+	// logging
 	private static final org.slf4j.Logger logger = LoggerFactory.getLogger(UserRestController.class);
-	
-	
-	
-	
+
 	// ==============================================================
 	// JWT TOKEN generator
 	// ==============================================================
@@ -68,20 +65,20 @@ public class UserRestController {
 
 	})
 	@PostMapping("/user/authenticate")
-	public String authentucateAndGetToken(@RequestBody AuthRequest authRequest) throws UserNameNotFoundException{
-		Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
-        if (authentication.isAuthenticated()) {
-            return jwtService.generateToken(authRequest.getUsername());
-       } 
-            
-            else {
-        	System.out.println("username is not available");
-            throw new UserNameNotFoundException("invalid user request !");
-        }
-		
+	public String authentucateAndGetToken(@RequestBody AuthRequest authRequest) throws UserNameNotFoundException {
+		Authentication authentication = authenticationManager.authenticate(
+				new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
+		if (authentication.isAuthenticated()) {
+			return jwtService.generateToken(authRequest.getUsername());
+		}
+
+		else {
+			System.out.println("username is not available");
+			throw new UserNameNotFoundException("invalid user request !");
+		}
+
 	}
-	
-	
+
 	// ==============================================================
 	// User Register API (ALL) role - user
 	// ==============================================================
@@ -96,17 +93,15 @@ public class UserRestController {
 		}
 		return new ResponseEntity<String>("User Registered Sucessfully", HttpStatus.CREATED);
 	}
-	
 
-	
 	// ==============================================================
-	// Add Librarian API API 
+	// Add Librarian API API
 	// ==============================================================
 	@Operation(description = "Post End-Point for Registering Librarian 'Only Admin Can Add The Libraian'", summary = "API For Registering Librarian")
 	@RequestMapping(value = "api-admin/librarian/register", method = RequestMethod.POST)
 	public ResponseEntity<String> saveMember(@Valid @RequestBody User user) {
 		userService.findByUsername(user.getUsername());
-		
+
 		Optional<User> user1 = Optional.ofNullable(userService.saveLibrarian(user));
 		if (user1.isEmpty()) {
 			throw new RegistrationFailedException("Registration Failed ......");
@@ -114,9 +109,6 @@ public class UserRestController {
 		return new ResponseEntity<String>("Librarian Registered Successfully", HttpStatus.CREATED);
 	}
 
-
-	
-	
 	// ==============================================================
 	// User Count API
 	// ==============================================================
@@ -124,41 +116,31 @@ public class UserRestController {
 	@GetMapping("api-admin/user/count")
 	public ResponseEntity<String> countAllUsers() {
 		Long userCount = userService.getTotalCount();
-			return new ResponseEntity<String>(userCount.toString(), HttpStatus.OK);
-		} 
+		return new ResponseEntity<String>(userCount.toString(), HttpStatus.OK);
+	}
 
-	
-	
 	// ==============================================================
-	// Faculty Member Count API 
+	// Faculty Member Count API
 	// ==============================================================
 	@Operation(description = "Get End-Point for Counting Faculty Member", summary = "API For getting Faculty Count")
 	@GetMapping("api-admin-librarian/user/faculty/count")
 	public ResponseEntity<String> countAllFacultyMembers() {
 		Long facultyCount = userService.getFacultyCount();
-			return new ResponseEntity<String>(facultyCount.toString(), HttpStatus.OK);
-		}
-	
+		return new ResponseEntity<String>(facultyCount.toString(), HttpStatus.OK);
+	}
 
-	
-	
 	// ==============================================================
-	// Student Member Count API 
+	// Student Member Count API
 	// ==============================================================
 	@Operation(description = "Get End-Point for Counting Student Member", summary = "API For getting Student Count")
 	@GetMapping("api-admin-librarian/user/student/count")
 	public ResponseEntity<String> countAllStudentMembers() {
 		Long studentCount = userService.getStudentsCount();
-			return new ResponseEntity<String>(studentCount.toString(), HttpStatus.OK);
-		}
+		return new ResponseEntity<String>(studentCount.toString(), HttpStatus.OK);
+	}
 
-
-	
-
-	
-	
 	// ==============================================================
-	// List Users Api(Sorted) 
+	// List Users Api(Sorted)
 	// ==============================================================
 	@Operation(description = "Get End-Point for Listing All User", summary = "API For getting Users")
 	@GetMapping("api-admin/users")
@@ -166,12 +148,9 @@ public class UserRestController {
 		List<User> list = userService.getAll();
 		return new ResponseEntity<List<User>>(list, HttpStatus.FOUND);
 	}
-	
 
-	
-	
 	// ==============================================================
-	// List Student Member Api 
+	// List Student Member Api
 	// ==============================================================
 	@Operation(description = "Get End-Point for Listing All Student", summary = "API For getting Students")
 	@GetMapping("api-admin-librarian/students")
@@ -180,12 +159,8 @@ public class UserRestController {
 		return new ResponseEntity<List<User>>(list, HttpStatus.FOUND);
 	}
 
-
-	
-	
-	
 	// ==============================================================
-	// List Faculty Member Api 
+	// List Faculty Member Api
 	// ==============================================================
 	@Operation(description = "Get End-Point for Listing All Faculty", summary = "API For getting Faculties")
 	@GetMapping("api-admin-librarian/faculty")
@@ -194,44 +169,33 @@ public class UserRestController {
 		return new ResponseEntity<List<User>>(list, HttpStatus.FOUND);
 	}
 
-
-	
-	
 	// ==============================================================
 	// Find Member API
 	// ==============================================================
 	@Operation(description = "Get End-Point for Finding User By Id", summary = "API For Searching User")
 	@GetMapping(value = "api-admin-librarian/find/{user_id}")
-	public ResponseEntity<User> findUserById(@PathVariable  ("user_id") Long id) {
+	public ResponseEntity<User> findUserById(@PathVariable("user_id") Long id) {
 		User user = userService.getMember(id).get();
 		return new ResponseEntity<User>(user, HttpStatus.FOUND);
 	}
 
-	
-	
-	
 	// ==============================================================
-	// Update Member API 
+	// Update Member API
 	// ============================================================
 	@Operation(description = "Put End-Point for Editing User Details", summary = "API For Updating User")
 	@PutMapping("api-all/update")
 	public ResponseEntity<String> updateMember(@Valid @RequestBody User member) {
 		Optional<User> member1 = userService.getMember(member.getId());
-		userService.update(member,member1.get());
-		return new ResponseEntity<String>("Member Updated With Name " + member.getFirstName(),
-				HttpStatus.ACCEPTED);
+		userService.update(member, member1.get());
+		return new ResponseEntity<String>("Member Updated With Name " + member.getFirstName(), HttpStatus.ACCEPTED);
 	}
 
-
-	
-	
-	
 	// ==============================================================
-	// Delete Member API 
+	// Delete Member API
 	// ==============================================================
 	@Operation(description = "Delete End-Point for Deleting User", summary = "API For Deleting User")
 	@RequestMapping(value = "api-admin/delete/{user_id}", method = RequestMethod.DELETE)
-	public ResponseEntity<String> removeUser(@PathVariable ("user_id") Long id) {
+	public ResponseEntity<String> removeUser(@PathVariable("user_id") Long id) {
 		User member = userService.getMember(id).get();
 		if (issueService.hasUsage(member)) {
 			userService.deleteMember(id);

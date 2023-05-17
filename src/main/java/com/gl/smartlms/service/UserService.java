@@ -2,7 +2,6 @@ package com.gl.smartlms.service;
 
 import java.util.List;
 
-
 import java.util.Optional;
 
 import javax.validation.Valid;
@@ -11,6 +10,9 @@ import org.springframework.stereotype.Service;
 
 import com.gl.smartlms.model.User;
 
+//==============================================================
+//= UserService  interface 
+//=================================================================
 @Service
 public interface UserService {
 
@@ -40,7 +42,7 @@ public interface UserService {
 
 	public void update(User member, User user);
 
-	public User saveLibrarian( User user);
+	public User saveLibrarian(User user);
 
 	public User saveUser(@Valid User user);
 

@@ -7,6 +7,9 @@ import org.springframework.stereotype.Service;
 
 import com.gl.smartlms.model.Category;
 
+//==============================================================
+//= CategoryService  interface 
+//=================================================================
 @Service
 public interface CategoryService {
 

@@ -11,6 +11,9 @@ import com.gl.smartlms.model.Book;
 import com.gl.smartlms.model.Issue;
 import com.gl.smartlms.model.User;
 
+//==============================================================
+//= IssueService  interface 
+//=================================================================
 @Service
 public interface IssueService {
 
@@ -31,7 +34,5 @@ public interface IssueService {
 	public List<Issue> getIssueByMember(User member);
 
 	public boolean hasUsage(User member);
-
-	
 
 }

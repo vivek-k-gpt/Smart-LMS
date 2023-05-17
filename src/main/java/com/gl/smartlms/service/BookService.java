@@ -8,6 +8,9 @@ import org.springframework.stereotype.Service;
 import com.gl.smartlms.model.Book;
 import com.gl.smartlms.model.Category;
 
+// ==============================================================
+// = BookService  interface 
+// =================================================================
 @Service
 public interface BookService {
 
@@ -52,7 +55,5 @@ public interface BookService {
 	public void delete(Book book);
 
 	public List<Book> getBookWithTag(String tag);
-
-
 
 }

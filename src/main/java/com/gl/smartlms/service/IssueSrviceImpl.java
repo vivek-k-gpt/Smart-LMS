@@ -17,6 +17,9 @@ import com.gl.smartlms.model.Issue;
 import com.gl.smartlms.model.User;
 import com.gl.smartlms.repository.IssueRepository;
 
+//==============================================================
+//= IssueService  implementation
+//=================================================================
 @Service
 public class IssueSrviceImpl implements IssueService {
 
@@ -104,12 +107,10 @@ public class IssueSrviceImpl implements IssueService {
 	@Override
 	public boolean hasUsage(User member) {
 		List<Issue> issueList = issueRepository.findByUserAndReturned(member, Constants.BOOK_NOT_RETURNED);
-		if(issueList.size() !=0) {
+		if (issueList.size() != 0) {
 			return false;
 		}
 		return true;
 	}
-
-	
 
 }

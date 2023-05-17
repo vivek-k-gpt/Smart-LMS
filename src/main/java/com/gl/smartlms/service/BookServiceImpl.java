@@ -17,6 +17,9 @@ import com.gl.smartlms.advice.BookNotFoundException;
 import com.gl.smartlms.advice.NoContentFoundException;
 import com.gl.smartlms.constants.*;
 
+//==============================================================
+//= BookService  implementation 
+//=================================================================
 @Service
 public class BookServiceImpl implements BookService {
 
@@ -191,18 +194,14 @@ public class BookServiceImpl implements BookService {
 		bookRepository.delete(book);
 	}
 
-	
-
 	@Override
 	public List<Book> getBookWithTag(String tag) {
 		List<Book> book = bookRepository.findByTag(tag);
-		
-		if(book.isEmpty()) {
+
+		if (book.isEmpty()) {
 			throw new NoContentFoundException("No Books  are available with tag" + tag + "List is Empty");
 		}
 		return book;
 	}
-
-
 
 }

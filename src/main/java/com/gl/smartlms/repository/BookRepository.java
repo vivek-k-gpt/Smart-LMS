@@ -10,6 +10,9 @@ import org.springframework.stereotype.Repository;
 import com.gl.smartlms.model.Book;
 import com.gl.smartlms.model.Category;
 
+// ==============================================================
+// = BOOK JPA Repository
+// =================================================================
 @Repository
 public interface BookRepository extends JpaRepository<Book, Long> {
 

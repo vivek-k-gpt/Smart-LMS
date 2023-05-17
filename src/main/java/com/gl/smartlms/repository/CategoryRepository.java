@@ -8,6 +8,9 @@ import org.springframework.stereotype.Repository;
 
 import com.gl.smartlms.model.Category;
 
+// ==============================================================
+// = CATEGORY JPA Repository
+// =================================================================
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Long> {
 

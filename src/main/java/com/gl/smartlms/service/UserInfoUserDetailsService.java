@@ -12,6 +12,9 @@ import com.gl.smartlms.model.User;
 import com.gl.smartlms.model.UserDetail;
 import com.gl.smartlms.repository.UserRepository;
 
+//==============================================================
+//= UserInFoUserDetail Service
+//=================================================================
 @Component
 public class UserInfoUserDetailsService implements UserDetailsService {
 

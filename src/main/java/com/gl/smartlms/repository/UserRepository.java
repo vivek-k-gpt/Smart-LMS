@@ -7,6 +7,9 @@ import org.springframework.stereotype.Repository;
 
 import com.gl.smartlms.model.User;
 
+// ==============================================================
+// = USER JPA Repository
+// =================================================================
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 

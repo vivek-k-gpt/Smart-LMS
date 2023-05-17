@@ -1,5 +1,4 @@
-#spring.queries.users-query=select username, password, active from user where username=?
-#spring.queries.roles-query=select username, role from user where username=?
+
 
 #spring.jackson.serialization.fail-on-empty-beans=false
 
@@ -23,5 +22,4 @@ spring:
                 dialect: org.hibernate.dialect.MySQLDialect
         show-sql: true
        
-     #servlet:
- #context-path: /lms
+     

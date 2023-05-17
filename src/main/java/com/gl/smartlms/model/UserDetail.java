@@ -10,7 +10,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 //==============================================================
-//= User Deatil (Security)
+//= User Details (Security)
 //=============================================================
 public class UserDetail implements UserDetails {
 
