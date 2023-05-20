@@ -1,5 +1,7 @@
 package com.gl.smartlms.restController;
 
+import com.gl.smartlms.service.*;
+
 import java.util.List;
 
 import org.springframework.security.core.Authentication;
@@ -22,7 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import com.gl.smartlms.advice.RegistrationFailedException;
-import com.gl.smartlms.model.AuthRequest;
+import com.gl.smartlms.model.RefreshToken;
 import com.gl.smartlms.model.User;
 import com.gl.smartlms.service.IssueService;
 import com.gl.smartlms.service.JwtService;
@@ -35,6 +37,9 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import com.gl.smartlms.advice.UserNameNotFoundException;
+import com.gl.smartlms.dto.AuthRequest;
+import com.gl.smartlms.dto.JwtResponse;
+import com.gl.smartlms.dto.RefreshTokenRequest;
 
 @RestController
 //@SecurityRequirement(name = "bearerAuth")
@@ -51,6 +56,9 @@ public class UserRestController {
 	private JwtService jwtService;
 
 	@Autowired
+	private RefreshTokenSevice refreshTokenSevice;//
+
+	@Autowired
 	private AuthenticationManager authenticationManager;
 
 	// logging
@@ -65,18 +73,38 @@ public class UserRestController {
 
 	})
 	@PostMapping("/user/authenticate")
-	public String authentucateAndGetToken(@RequestBody AuthRequest authRequest) throws UserNameNotFoundException {
+	public JwtResponse authentucateAndGetToken(@RequestBody AuthRequest authRequest) throws UserNameNotFoundException {
 		Authentication authentication = authenticationManager.authenticate(
 				new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
 		if (authentication.isAuthenticated()) {
-			return jwtService.generateToken(authRequest.getUsername());
+			RefreshToken refreshToken = refreshTokenSevice.createRefreshToken(authRequest.getUsername());//
+			jwtService.generateToken(authRequest.getUsername());
+			return JwtResponse.builder().accessToken(jwtService.generateToken(authRequest.getUsername()))
+					.token(refreshToken.getToken()).build();
 		}
 
 		else {
-			System.out.println("username is not available");
+
 			throw new UserNameNotFoundException("invalid user request !");
 		}
 
+	}
+
+	// ==============================================================
+	// JWT REFRESH TOKEN generator
+	// ==============================================================
+	@Operation(description = "Post End-Point for Generating Refresh Token", summary = "API For Generating REFRESH TOKEN", responses = {
+			@ApiResponse(description = "Success", responseCode = "200"),
+			@ApiResponse(description = "Token Not Found", responseCode = "403")
+
+	})
+	@PostMapping("/refreshtoken")
+	public JwtResponse refreshToken(@RequestBody RefreshTokenRequest refreshTokenRequest) {
+		return refreshTokenSevice.findByToken(refreshTokenRequest.getToken()).map(refreshTokenSevice::verifyExpiration)
+				.map(RefreshToken::getUserInfo).map(userInfo -> {
+					String accessToken = jwtService.generateToken(userInfo.getUsername());
+					return JwtResponse.builder().accessToken(accessToken).token(refreshTokenRequest.getToken()).build();
+				}).orElseThrow(() -> new RuntimeException("Refresh token is not in database!"));
 	}
 
 	// ==============================================================

@@ -9,7 +9,7 @@ spring:
     datasource:
         driver-class-name: com.mysql.cj.jdbc.Driver
         password: root
-        url: jdbc:mysql://localhost:3306/library_management_system_DB?useSSL=true
+        url: jdbc:mysql://localhost:3306/library_management_system_DB2?useSSL=true
         username: root
     jackson:
         serialization:

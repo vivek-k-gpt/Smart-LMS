@@ -1,4 +1,4 @@
-package com.gl.smartlms.model;
+package com.gl.smartlms.dto;
 
 import io.swagger.v3.oas.annotations.Hidden;
 import lombok.AllArgsConstructor;

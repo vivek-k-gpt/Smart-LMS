@@ -1,4 +1,4 @@
-package com.gl.smartlms.model;
+package com.gl.smartlms.dto;
 
 import java.time.LocalDateTime;
 import java.util.List;
