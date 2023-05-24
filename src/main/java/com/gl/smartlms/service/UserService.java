@@ -26,7 +26,7 @@ public interface UserService {
 
 	public Long getStudentsCount();
 
-	public User getUserValidate(String username, String password);
+	
 
 	public User save(User user);
 

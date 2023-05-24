@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.gl.smartlms.model.RefreshToken;
+import com.gl.smartlms.model.User;
 
 
 //==============================================================
@@ -13,5 +14,9 @@ import com.gl.smartlms.model.RefreshToken;
 public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Integer> {
 
 	public Optional<RefreshToken> findByToken(String token);
+
+	public void deleteByUserInfo(User member);
+
+
 
 }

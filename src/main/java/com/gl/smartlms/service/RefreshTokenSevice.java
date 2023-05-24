@@ -8,8 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.gl.smartlms.model.RefreshToken;
+import com.gl.smartlms.model.User;
 import com.gl.smartlms.repository.RefreshTokenRepository;
 import com.gl.smartlms.repository.UserRepository;
+
+import jakarta.transaction.Transactional;
 
 
 
@@ -17,6 +20,7 @@ import com.gl.smartlms.repository.UserRepository;
 //= RefreshTokenService  Class
 //=================================================================
 @Service
+@Transactional
 public class RefreshTokenSevice {
 
 	
@@ -50,4 +54,11 @@ public class RefreshTokenSevice {
         }
         return token;
     }
+
+
+
+	public void deleteToken(User member) {
+		refreshTokenRepository.deleteByUserInfo(member);
+		
+	}
 }

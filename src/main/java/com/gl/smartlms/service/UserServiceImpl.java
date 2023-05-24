@@ -50,19 +50,8 @@ public class UserServiceImpl implements UserService {
 		return users;
 	}
 
-	@Override
-	public Optional<User> getMember(Long id) {
-		Optional<User> user = userRepository.findById(id);
-		if (user.isEmpty()) {
-			throw new UserNotFoundException("No User is found with id :" + id);
-		}
-		return user;
-	}
 
-	@Override
-	public User getUserValidate(String username, String password) {
-		return userRepository.findByUsernameAndPassword(username, beBCryptPasswordEncoder.encode(password));
-	}
+
 
 	@Override
 	public User save(User user) {
@@ -108,6 +97,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public void update(User member, User user) {
+		
 		member.setPassword(user.getPassword());
 		member.setRole(user.getRole());
 		member.setUsername(user.getUsername());
@@ -129,6 +119,16 @@ public class UserServiceImpl implements UserService {
 		user.setRole(Constants.ROLE_USER);
 		user.setPassword(beBCryptPasswordEncoder.encode(user.getPassword()));
 		return userRepository.save(user);
+	}
+
+
+	@Override
+	public Optional<User> getMember(Long id) {
+		Optional<User> user = userRepository.findById(id);
+		if (user.isEmpty()) {
+			throw new UserNotFoundException("No User is found with id :" + id);
+		}
+		return user;
 	}
 
 }

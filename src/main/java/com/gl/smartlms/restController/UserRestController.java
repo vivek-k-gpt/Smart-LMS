@@ -42,7 +42,6 @@ import com.gl.smartlms.dto.JwtResponse;
 import com.gl.smartlms.dto.RefreshTokenRequest;
 
 @RestController
-//@SecurityRequirement(name = "bearerAuth")
 @Tag(name = "User")
 public class UserRestController {
 
@@ -68,8 +67,8 @@ public class UserRestController {
 	// JWT TOKEN generator
 	// ==============================================================
 	@Operation(description = "Post End-Point for Generating JWT Token", summary = "API For Generating TOKEN", responses = {
-			@ApiResponse(description = "Success", responseCode = "200"),
-			@ApiResponse(description = "User Not Found", responseCode = "403")
+//			@ApiResponse(description = "Success", responseCode = "200"),
+//			@ApiResponse(description = "User Not Found", responseCode = "403")
 
 	})
 	@PostMapping("/user/authenticate")
@@ -127,7 +126,7 @@ public class UserRestController {
 	// ==============================================================
 	@Operation(description = "Post End-Point for Registering Librarian 'Only Admin Can Add The Libraian'", summary = "API For Registering Librarian")
 	@RequestMapping(value = "api-admin/librarian/register", method = RequestMethod.POST)
-	public ResponseEntity<String> saveMember(@Valid @RequestBody User user) {
+	public ResponseEntity<String> registerLibrarian(@Valid @RequestBody User user) {
 		userService.findByUsername(user.getUsername());
 
 		Optional<User> user1 = Optional.ofNullable(userService.saveLibrarian(user));
@@ -226,6 +225,7 @@ public class UserRestController {
 	public ResponseEntity<String> removeUser(@PathVariable("user_id") Long id) {
 		User member = userService.getMember(id).get();
 		if (issueService.hasUsage(member)) {
+			refreshTokenSevice.deleteToken(member);
 			userService.deleteMember(id);
 			return new ResponseEntity<String>("User Deleted Successfully", HttpStatus.OK);
 		} else {

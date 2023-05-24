@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 // ==============================================================
 // = Class To help in mapping UserName And Password For Generating JWT token
 // =================================================================
-@Hidden
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
